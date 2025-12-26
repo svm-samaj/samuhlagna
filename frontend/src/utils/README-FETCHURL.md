@@ -23,13 +23,13 @@ frontend/
 ```
 VITE_NODE_ENV=development
 VITE_DEV_API_URL=http://127.0.0.1:8000
-VITE_PROD_API_URL=https://svmps-frontend.onrender.com
+VITE_PROD_API_URL=samuhlagna-production.up.railway.app
 ```
 
 ### Production (.env.production)
 ```
 VITE_NODE_ENV=production
-VITE_PROD_API_URL=https://svmps-frontend.onrender.com
+VITE_PROD_API_URL=samuhlagna-production.up.railway.app
 ```
 
 ## Usage in Components
@@ -44,7 +44,7 @@ import { API_URLS } from "../../../utils/fetchurl";
 
 ```jsx
 // Instead of hardcoded URLs
-// await axios.get("https://svmps-frontend.onrender.com/user_data/");
+// await axios.get("samuhlagna-production.up.railway.app/user_data/");
 
 // Use centralized URLs
 await axios.get(API_URLS.getAllUsers());
@@ -79,7 +79,7 @@ await axios.delete(API_URLS.deleteUser(userId));
 The system automatically detects the environment and uses the appropriate URL:
 
 - **Development**: Uses `VITE_DEV_API_URL` (default: http://127.0.0.1:8000)
-- **Production**: Uses `VITE_PROD_API_URL` (default: https://svmps-frontend.onrender.com)
+- **Production**: Uses `VITE_PROD_API_URL` (default: samuhlagna-production.up.railway.app)
 
 ## Environment Information
 
@@ -103,7 +103,7 @@ console.log("Is production:", ENV_INFO.isProduction());
 ### Production
 1. Set environment variables on your hosting platform:
    - `VITE_NODE_ENV=production`
-   - `VITE_PROD_API_URL=https://svmps-frontend.onrender.com`
+   - `VITE_PROD_API_URL=samuhlagna-production.up.railway.app`
 2. Build the application: `npm run build`
 3. Deploy the built files
 

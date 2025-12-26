@@ -69,7 +69,7 @@ const getBaseUrl = () => {
   
   // Production environment (GitHub Pages, Render, etc.)
   if (detectedEnv === 'production') {
-    const apiUrl = prodUrl || 'https://svmps-frontend.onrender.com';
+    const apiUrl = prodUrl || 'samuhlagna-production.up.railway.app';
     console.log('✅ Final Environment: production');
     console.log('✅ Final API URL:', apiUrl);
     return apiUrl;
@@ -78,7 +78,7 @@ const getBaseUrl = () => {
   // Fallback error (should never reach here)
   console.error(`❌ Invalid environment detected: ${detectedEnv}`);
   // Force production as last resort
-  const fallbackUrl = 'https://svmps-frontend.onrender.com';
+  const fallbackUrl = 'samuhlagna-production.up.railway.app';
   console.log('🆘 FALLBACK to production URL:', fallbackUrl);
   return fallbackUrl;
 };
