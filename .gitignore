@@ -32,7 +32,7 @@ dist-ssr
 env_be
 # test.py
 
-.env
+# .env
 insert_users_part_1.sql
 
 Extra
