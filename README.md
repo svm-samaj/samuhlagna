@@ -23,7 +23,7 @@ pip install -r requirements.txt
 Run the FastAPI server with Uvicorn:
 
 uvicorn main:app --reload --port 8002
-The backend will be accessible at: samuhlagna-production.up.railway.app
+The backend will be accessible at: https://samuhlagna-production.up.railway.app
 
 --------------------------------------------------------------------------------
 

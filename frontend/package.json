@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:prod": "cross-env VITE_NODE_ENV=production VITE_PROD_API_URL=samuhlagna-production.up.railway.app vite build",
+    "build:prod": "cross-env VITE_NODE_ENV=production VITE_PROD_API_URL=https://samuhlagna-production.up.railway.app vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build:prod",
