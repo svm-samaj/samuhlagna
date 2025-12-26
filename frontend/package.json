@@ -1,0 +1,38 @@
+{
+  "name": "svmps_frontend",
+  "homepage": "https://Sharad-sharma1.github.io/svmps_front_end/",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:prod": "cross-env VITE_NODE_ENV=production VITE_PROD_API_URL=https://svmps-frontend.onrender.com vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "predeploy": "npm run build:prod",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "lodash.debounce": "^4.0.8",
+    "qs": "^6.14.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.5.0",
+    "react-select": "^5.10.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "cross-env": "^7.0.3",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "gh-pages": "^6.3.0",
+    "globals": "^15.15.0",
+    "vite": "^6.2.0"
+  }
+}

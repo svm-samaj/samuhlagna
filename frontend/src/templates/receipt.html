@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="gu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>રશીદ - સમૂહ લગન ટ્રસ્ટ (રિસીટ)</title>
+  <style>
+    :root{
+      --border:#2f2f2f;
+      --header-bg:#2b2b2b;
+      --muted:#7b7b7b;
+      --accent:#d9d9d9;
+      --paper:#ffffff;
+      font-family: 'Noto Sans Gujarati', 'Noto Sans', Arial, sans-serif;
+      color: #111;
+    }
+    /* page */
+    body{
+      background: #efefef;
+      padding: 24px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      min-height:100vh;
+    }
+    .receipt{
+      width: 1000px; /* similar to provided image */
+      background: var(--paper);
+      border: 8px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      padding: 14px;
+      box-sizing: border-box;
+    }
+
+    /* outer header strip */
+    .top-strip{
+      border: 6px solid var(--border);
+      padding: 10px 12px;
+      box-sizing: border-box;
+    }
+    .header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background: var(--header-bg);
+      color: #fff;
+      padding:18px 22px;
+      box-sizing:border-box;
+    }
+    .header .left, .header .right{
+      flex:0 0 120px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .header .logo{
+      width:100px; height:100px; object-fit:contain; filter:grayscale(1) contrast(.9);
+      background: #fff; padding:6px; border-radius:6px;
+    }
+    .header .title{
+      flex:1;
+      text-align:center;
+      font-weight:700;
+      font-size:34px;
+      line-height:1.02;
+      letter-spacing:1px;
+    }
+    .header .subtitle{
+      display:block;
+      margin-top:6px;
+      font-size:16px;
+      color: rgba(255,255,255,0.9);
+      font-weight:600;
+    }
+
+    /* contact row */
+    .contact{
+      border-top: 2px solid var(--border);
+      border-bottom: 2px solid var(--border);
+      padding:8px 12px;
+      font-weight:600;
+      color:var(--muted);
+      margin-top:8px;
+    }
+
+    /* form area */
+    .form{
+      padding:14px 8px 0 8px;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:12px;
+    }
+    .row label{ width:120px; font-weight:700; }
+    .row .input-line{
+      flex:1; border-bottom:2px solid #000; padding:6px 8px; height:28px;
+    }
+    .date{ width:150px; text-align:center; }
+
+    /* donation table */
+    .donation{
+      margin-top:12px;
+      border-collapse:collapse;
+      width:100%;
+    }
+    .donation thead th{
+      background: var(--accent);
+      border:2px solid var(--border);
+      padding:10px;
+      font-weight:700;
+      text-align:left;
+    }
+    .donation tbody td{
+      border:2px solid var(--border);
+      padding:14px 12px;
+      vertical-align:top;
+      height:42px;
+    }
+    .donation .col-no{ width:45px; text-align:center; font-weight:700 }
+    .donation .col-desc{ width:75%; }
+    .donation .col-amt{ width:18%; text-align:right; font-weight:700 }
+
+    .total-row td{ font-weight:900; font-size:18px; text-align:right }
+
+    .footer-sign{
+      margin-top:26px; display:flex; justify-content:flex-end; align-items:center; padding-right:18px;
+      font-weight:800; font-size:20px;
+    }
+
+    /* small print */
+    .small{font-size:12px; color:var(--muted)}
+
+    /* responsive */
+    @media (max-width:1100px){ .receipt{ width:92%; } }
+  </style>
+</head>
+<body>
+  <div class="receipt">
+    <div class="top-strip">
+      <div class="header">
+        <div class="left"><img class="logo" src="/mnt/data/8d6ebcc5-3666-4419-877f-8bbf8e4ebeae.jpeg" alt="left logo"></div>
+        <div class="title">
+          શ્રી વિરધર્મા ધાનદાર મેવાડા સુધાર સમાજ<br>
+          સમૂહ લગન ટ્રસ્ટ, સિદ્ધપુર
+          <span class="subtitle">C/o. "સેવા સદન" મેવાડા ટીમભિની સામે, દેવલી રોડ, સિદ્ધપુર - ૩૪૫૧૫</span>
+        </div>
+        <div class="right"><img class="logo" src="/mnt/data/8d6ebcc5-3666-4419-877f-8bbf8e4ebeae.jpeg" alt="right image"></div>
+      </div>
+      <div class="contact small">રજી. નં. ૯/૧૦, પાટણ, તા. ૩-૧૨-૨૦૦૮ &nbsp;&nbsp; | &nbsp;&nbsp; <strong>તા.</strong> &nbsp; / / ૨૦૨</div>
+    </div>
+
+    <div class="form">
+      <div class="row"><label>શ્રી/શ્રીમતી,</label><div class="input-line">&nbsp;</div></div>
+      <div class="row"><label>મૂળ વતન :</label><div class="input-line">&nbsp;</div><label style="width:90px">રહેઠાણ :</label><div class="input-line">&nbsp;</div></div>
+      <div class="row"><label>મોબાઇલ નં.</label><div class="input-line">&nbsp;</div><label style="width:90px">સરનામું</label><div class="input-line">&nbsp;</div></div>
+      <div class="row"><label>કેશ/ચેક/ઓનલાઈન થી</label><div class="input-line">&nbsp;</div></div>
+
+      <table class="donation">
+        <thead>
+          <tr>
+            <th class="col-no">ક્રમ</th>
+            <th class="col-desc">દાનની વિગત</th>
+            <th class="col-amt">રકમ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="col-no">1</td>
+            <td class="col-desc">કંડોગ્રીઃ (કોર્પસ ફંડ) / _____ સમૂહ લગન ખર્ચ / દાન ભેટ</td>
+            <td class="col-amt">&nbsp;</td>
+          </tr>
+          <tr>
+            <td class="col-no">2</td>
+            <td class="col-desc">અન્ય દાન :</td>
+            <td class="col-amt">&nbsp;</td>
+          </tr>
+          <tr class="total-row">
+            <td colspan="2" style="text-align:right;padding-right:18px;">કુલ</td>
+            <td class="col-amt">&nbsp;</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div style="height:36px"></div>
+
+      <div class="footer-sign">સ્વીકૃતિ કરનારની સહી</div>
+    </div>
+
+  </div>
+</body>
+</html>

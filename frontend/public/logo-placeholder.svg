@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="60" height="75" viewBox="0 0 60 75" xmlns="http://www.w3.org/2000/svg">
+  <!-- Placeholder for Organization Logo -->
+  <rect width="60" height="75" fill="#f0f8ff" stroke="#4CAF50" stroke-width="2" rx="5"/>
+  
+  <!-- Om Symbol -->
+  <text x="30" y="25" text-anchor="middle" font-size="16" fill="#8B4513" font-weight="bold">ॐ</text>
+  
+  <!-- Organization Text -->
+  <text x="30" y="40" text-anchor="middle" font-size="8" fill="#2d3748" font-weight="600">શ્રી વિશ્વકર્મા</text>
+  <text x="30" y="50" text-anchor="middle" font-size="7" fill="#2d3748">સમાજ</text>
+  <text x="30" y="60" text-anchor="middle" font-size="6" fill="#4a5568">સિદ્ધપુર</text>
+  
+  <!-- Decorative border -->
+  <rect x="2" y="2" width="56" height="71" fill="none" stroke="#FF9800" stroke-width="1" rx="3" opacity="0.5"/>
+</svg>

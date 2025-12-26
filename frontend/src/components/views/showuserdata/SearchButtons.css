@@ -1,0 +1,421 @@
+/* Compact Filter Rows Layout */
+.filter-row.compact-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  min-height: 36px;
+  overflow: visible;
+  width: 100%;
+  /* Allow wrapping when content overflows */
+  flex-wrap: wrap;
+}
+
+.row-one {
+  justify-content: space-between;
+}
+
+.row-two {
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+/* Ensure proper wrapping for row-two elements */
+.row-two .type-buttons {
+  flex-shrink: 0;
+}
+
+.row-two .dropdowns-section {
+  min-width: 0;
+}
+
+/* Mini Search Input */
+.search-input.mini {
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+  height: 36px;
+  box-sizing: border-box;
+}
+
+.search-input.mini:focus {
+  border-color: #3498db;
+}
+
+/* Action Buttons Group */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Mini Buttons Base */
+.search-btn.mini, .clear-btn.mini, .type-btn.mini, .download-btn.mini {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  box-sizing: border-box;
+  min-width: 80px;
+  gap: 4px;
+}
+
+.search-btn {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  color: white;
+  box-shadow: 0 3px 8px rgba(52, 152, 219, 0.3);
+}
+
+.search-btn:hover {
+  background: linear-gradient(135deg, #2980b9, #21618c);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  transform: translateY(-1px);
+}
+
+.clear-btn {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+  color: white;
+  box-shadow: 0 3px 8px rgba(231, 76, 60, 0.3);
+}
+
+.clear-btn:hover {
+  background: linear-gradient(135deg, #c0392b, #a93226);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Type Buttons */
+.type-buttons {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-right: 15px;
+}
+
+.type-btn.mini {
+  border: 1px solid #ddd;
+  background: white;
+  min-width: 60px;
+  padding: 8px 10px;
+}
+
+.type-btn.mini:hover {
+  border-color: #3498db;
+  background: #f8f9fa;
+  transform: translateY(-1px);
+}
+
+.type-btn.mini.active-type {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  color: white;
+  border-color: #27ae60;
+  box-shadow: 0 2px 6px rgba(39, 174, 96, 0.3);
+}
+
+/* Download Buttons */
+.download-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.download-btn.mini {
+  min-width: 100px;
+  gap: 4px;
+}
+
+/* Dropdowns Section */
+.dropdowns-section {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  flex: 1;
+  flex-wrap: wrap;
+  overflow: visible;
+}
+
+.select-wrapper.mini {
+  flex: 1 1 200px;
+  min-width: 150px;
+  width: auto;
+  max-width: 100%;
+  /* Allow wrapping when content is too wide */
+}
+
+/* React Select Multi-Value Styling with Vertical Expansion */
+.select-wrapper.mini .react-select-menu__control {
+  min-height: 36px !important;
+  /* Remove max-height to allow vertical expansion */
+  height: auto !important;
+  width: 100% !important;
+  min-width: 150px !important;
+  display: flex !important;
+  align-items: stretch !important;
+  border: 1px solid #ddd !important;
+  border-radius: 4px !important;
+  font-size: 0.9rem !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+}
+
+.select-wrapper.mini .react-select-menu__value-container {
+  padding: 4px !important;
+  padding-right: 70px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  flex-wrap: wrap !important;
+  gap: 2px !important;
+  /* Remove height constraints to allow vertical growth */
+  min-height: 28px !important;
+  overflow: visible !important;
+  width: 100% !important;
+  flex: 1 1 auto !important;
+}
+
+.select-wrapper.mini .react-select-menu__multi-value {
+  margin: 0 1px !important;
+  font-size: 0.75rem !important;
+  background-color: #e3f2fd !important;
+  border-radius: 3px !important;
+  flex-shrink: 0 !important;
+  display: inline-flex !important;
+  white-space: nowrap !important;
+  max-width: 100% !important;
+  height: 20px !important;
+}
+
+.select-wrapper.mini .react-select-menu__multi-value__label {
+  padding: 1px 3px !important;
+  font-size: 0.75rem !important;
+  color: #1976d2 !important;
+  white-space: nowrap !important;
+  max-width: 120px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 16px !important;
+}
+
+.select-wrapper.mini .react-select-menu__multi-value__remove {
+  padding: 1px 2px !important;
+  color: #1976d2 !important;
+  font-size: 0.7rem !important;
+  cursor: pointer !important;
+  border-radius: 0 3px 3px 0 !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.select-wrapper.mini .react-select-menu__multi-value__remove:hover {
+  background-color: #bbdefb !important;
+  color: #0d47a1 !important;
+}
+
+.select-wrapper.mini .react-select-menu__input-container {
+  padding: 0 !important;
+  margin: 0 !important;
+  min-width: 20px !important;
+  flex: 1 !important;
+  line-height: 20px !important;
+}
+
+.select-wrapper.mini .react-select-menu__placeholder {
+  color: #999 !important;
+  font-size: 0.9rem !important;
+  margin: 0 !important;
+  line-height: 20px !important;
+}
+
+.select-wrapper.mini .react-select-menu__indicators {
+  padding: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-direction: row !important;
+  gap: 2px !important;
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  height: 28px !important;
+  background-color: white !important;
+  z-index: 10 !important;
+}
+
+.select-wrapper.mini .react-select-menu__dropdown-indicator {
+  padding: 4px !important;
+  color: #666 !important;
+  border-radius: 3px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.select-wrapper.mini .react-select-menu__dropdown-indicator:hover {
+  background-color: #f0f0f0 !important;
+}
+
+.select-wrapper.mini .react-select-menu__clear-indicator {
+  padding: 4px !important;
+  color: #666 !important;
+  border-radius: 3px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.select-wrapper.mini .react-select-menu__clear-indicator:hover {
+  background-color: #f0f0f0 !important;
+  color: #e74c3c !important;
+}
+
+/* Allow vertical expansion within filter controls when many items are selected */
+
+/* Additional styling for better visual hierarchy */
+.select-wrapper.mini .react-select-menu__control:hover {
+  border-color: #3498db !important;
+  box-shadow: 0 0 0 1px #3498db !important;
+}
+
+.select-wrapper.mini .react-select-menu__control--is-focused {
+  border-color: #3498db !important;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2) !important;
+}
+
+.pdf-btn {
+  background: linear-gradient(135deg, #e67e22, #d35400);
+  color: white;
+  box-shadow: 0 3px 8px rgba(230, 126, 34, 0.3);
+}
+
+.pdf-btn:hover {
+  background: linear-gradient(135deg, #d35400, #ba4a00);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
+}
+
+.csv-btn {
+  background: linear-gradient(135deg, #27ae60, #229954);
+  color: white;
+  box-shadow: 0 3px 8px rgba(39, 174, 96, 0.3);
+}
+
+.csv-btn:hover {
+  background: linear-gradient(135deg, #229954, #1e8449);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+}
+
+/* Ensure container stays within viewport and content wraps */
+.show-user-container {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Responsive Design - Allow wrapping at all screen sizes when needed */
+
+@media (max-width: 1200px) {
+  .row-one {
+    gap: 8px;
+  }
+  
+  .search-input.mini {
+    min-width: 180px;
+    max-width: 250px;
+  }
+  
+  .dropdowns-section {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 992px) {
+  .filter-row.compact-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .row-one {
+    justify-content: stretch;
+  }
+  
+  .search-input.mini {
+    max-width: none;
+    margin-bottom: 6px;
+  }
+  
+  .action-buttons, .download-buttons {
+    justify-content: center;
+    margin-bottom: 6px;
+  }
+  
+  .row-two {
+    justify-content: stretch;
+  }
+  
+  .type-buttons {
+    justify-content: center;
+    margin-right: 0;
+    margin-bottom: 6px;
+  }
+  
+  .dropdowns-section {
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .select-wrapper.mini {
+    flex: 1 1 100%;
+    min-width: 150px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .search-btn.mini, .clear-btn.mini {
+    min-width: 70px;
+    font-size: 0.8rem;
+    padding: 6px 8px;
+    height: 32px;
+  }
+  
+  .type-btn.mini {
+    min-width: 50px;
+    font-size: 0.8rem;
+    padding: 6px 8px;
+    height: 32px;
+  }
+  
+  .download-btn.mini {
+    min-width: 80px;
+    font-size: 0.8rem;
+    padding: 6px 8px;
+    height: 32px;
+  }
+  
+  .search-input.mini {
+    height: 32px;
+    font-size: 0.85rem;
+  }
+  
+  .filter-row.compact-row {
+    min-height: 32px;
+  }
+  
+  .action-buttons, .download-buttons, .type-buttons {
+    gap: 4px;
+  }
+}

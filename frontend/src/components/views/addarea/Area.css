@@ -1,0 +1,212 @@
+.addarea-container {
+  display: flex;
+  gap: 2rem;
+  padding: 2.5rem;
+  flex-wrap: wrap;
+  background: linear-gradient(to right, #e0f7fa, #ffffff);
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+/* Left section - Add Area */
+.addarea-left {
+  flex: 1;
+  min-width: 300px;
+  background: linear-gradient(135deg, #c2e9fb, #a1c4fd);
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.addarea-left h2 {
+  margin-bottom: 1rem;
+  color: #004d80;
+  font-size: 1.5rem;
+}
+
+.addarea-left input {
+  padding: 0.7rem;
+  width: 100%;
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-size: 1rem;
+}
+
+.addarea-left button {
+  padding: 0.6rem 1.4rem;
+  background: linear-gradient(45deg, #007bff, #00c6ff);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.4);
+  transition: background 0.3s ease;
+  width: 100%;
+}
+
+.addarea-left button:hover {
+  background: linear-gradient(45deg, #0056b3, #00aaff);
+}
+
+/* Right section - Area List */
+.addarea-right {
+  flex: 2;
+  min-width: 350px;
+  background-image: linear-gradient(
+    64.3deg,
+    rgba(250, 143, 159, 0.3) 17.7%,   
+    rgba(248, 218, 129, 0.4) 64.7%,   
+    rgba(171, 252, 171, 0.35) 112.1%  
+  );
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.addarea-right h2 {
+  margin-bottom: 1rem;
+  color: #004d80;
+  font-size: 1.5rem;
+}
+
+.addarea-right input {
+  padding: 0.7rem;
+  width: 100%;
+  margin-bottom: 1.25rem;
+  border: none;
+  border-radius: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-size: 1rem;
+}
+
+.area-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.area-item {
+  background: #e3f2fd;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.6rem;
+  font-weight: 500;
+  color: #1a237e;
+  transition: transform 0.2s, background 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.area-item:hover {
+  transform: translateX(5px);
+  background: #bbdefb;
+}
+
+.delete-button {
+  padding: 5px 12px;
+  background: linear-gradient(45deg, #ff8a95, #ff7782);
+  border: none;
+  border-radius: 20px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(255, 138, 149, 0.4);
+}
+
+.delete-button:hover {
+  background: linear-gradient(45deg, #ff6b7a, #ff5864);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 138, 149, 0.6);
+}
+
+.pagination {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background: #e0e0e0;
+  color: #333;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.pagination button.active {
+  background: #007bff;
+  color: white;
+}
+
+.pagination button:hover {
+  background: #0056b3;
+  color: white;
+}
+
+/* ================= Responsive Styles ================= */
+@media (max-width: 768px) {
+  .addarea-container {
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .addarea-left,
+  .addarea-right {
+    min-width: 100%;
+    padding: 1.5rem;
+  }
+
+  .addarea-left h2,
+  .addarea-right h2 {
+    font-size: 1.3rem;
+    text-align: center;
+  }
+
+  .addarea-left button,
+  .pagination button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .addarea-container {
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .addarea-left,
+  .addarea-right {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .addarea-left input,
+  .addarea-right input {
+    font-size: 0.95rem;
+  }
+
+  .addarea-left button {
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+  }
+
+  .pagination {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pagination button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,260 @@
+/* Receipt Management Page Styles */
+.receipt-management-container {
+  position: relative;
+  padding: 1rem 2rem 2rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 60px);
+  background-image: linear-gradient(64.3deg, rgba(254,122,152,0.81) 17.7%, rgba(255,206,134,1) 64.7%, rgba(172,253,163,0.64) 112.1%);
+  overflow: hidden;
+  box-sizing: border-box;
+  margin-top: 15px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Background shapes */
+.receipt-management-container::before,
+.receipt-management-container::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.2;
+  filter: blur(100px);
+  z-index: 0;
+}
+
+.receipt-management-container::before {
+  width: 350px;
+  height: 350px;
+  background: #5075c6;
+  top: -100px;
+  left: -100px;
+}
+
+.receipt-management-container::after {
+  width: 450px;
+  height: 450px;
+  background: #7a9be0;
+  bottom: -150px;
+  right: -150px;
+}
+
+/* Header Section */
+.receipt-header-2 {
+  /* background-color: aqua; */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+  margin-top: 1rem;
+  z-index: 2;
+  width: 100%;
+}
+
+.receipt-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0;
+  color: #000000;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.receipt-subtitle {
+  display: none;
+}
+
+/* Cards Grid */
+.receipt-cards-grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  margin-bottom: 3rem;
+  margin-top: 1rem;
+  z-index: 1;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Receipt Card */
+.receipt-card {
+  background: #f7faff;
+  border-radius: 16px;
+  padding: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  border: 2px solid transparent;
+  background-image: linear-gradient(
+    135deg,
+    rgba(250, 143, 159, 0.1) 0%,
+    rgba(248, 218, 129, 0.1) 50%,
+    rgba(171, 252, 171, 0.1) 100%
+  );
+}
+
+.receipt-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  border-color: var(--card-color);
+}
+
+.receipt-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--card-color);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.receipt-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* Card Content */
+.card-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.receipt-card .card-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin-bottom: 0.75rem;
+}
+
+.card-description {
+  font-size: 1rem;
+  color: #4a5568;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.card-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--card-color);
+  font-weight: 600;
+  margin-top: auto;
+}
+
+.arrow {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.receipt-card:hover .arrow {
+  transform: translateX(5px);
+}
+
+
+
+/* Responsive Design */
+@media (max-width: 900px) {
+  .receipt-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .receipt-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .receipt-management-container {
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    margin-top: 10px;
+  }
+
+  .receipt-title {
+    font-size: 1.5rem;
+  }
+
+  .receipt-header {
+    margin-bottom: 2rem;
+    margin-top: 0.75rem;
+  }
+
+  .receipt-cards-grid {
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .receipt-card {
+    padding: 1.5rem;
+  }
+
+  .card-icon {
+    font-size: 2.5rem;
+  }
+
+  .receipt-card .card-title {
+    font-size: 1.25rem;
+  }
+
+
+}
+
+@media (max-width: 480px) {
+  .receipt-management-container {
+    padding: 0.75rem 1rem 1rem 1rem;
+    margin-top: 5px;
+  }
+
+  .receipt-title {
+    font-size: 1.3rem;
+  }
+
+  .receipt-header {
+    margin-bottom: 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .receipt-cards-grid {
+    gap: 1rem;
+  }
+
+  .receipt-card {
+    padding: 1.25rem;
+  }
+
+
+
+  .receipt-management-container::before,
+  .receipt-management-container::after {
+    display: none;
+  }
+}
+
+/* Loading and hover states */
+.receipt-card.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.receipt-card.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.receipt-card.disabled:hover {
+  transform: none;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}

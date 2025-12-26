@@ -1,0 +1,1088 @@
+/* Import Gujarati Font */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;600;700&display=swap');
+
+/* CSS Variables */
+:root{
+  --border:#000000;
+  --header-bg: #000000;
+  --muted:#7b7b7b;
+  --accent:#d9d9d9;
+  --paper:#ffffff;
+}
+
+/* Container Styles */
+.create-receipt-container {
+  padding: 0.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 60px);
+  background-image: linear-gradient(64.3deg, rgba(254,122,152,0.81) 17.7%, rgba(255,206,134,1) 64.7%, rgba(172,253,163,0.64) 112.1%);
+  border-radius: 5px;
+  margin-top: 5px;
+  font-family: 'Noto Sans Gujarati', 'Noto Sans', Arial, sans-serif;
+  color: #111;
+}
+
+/* Page Title */
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  margin-top: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Action Buttons */
+.receipt-actions {
+  margin-bottom: 0.5rem;
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-save {
+  background: #4CAF50;
+  color: white;
+}
+
+.btn-save:hover {
+  background: #45a049;
+  transform: translateY(-2px);
+}
+
+.btn-print {
+  background: #2196F3;
+  color: white;
+}
+
+.btn-print:hover {
+  background: #1976D2;
+  transform: translateY(-2px);
+}
+
+.btn-edit {
+  background: #FF9800;
+  color: white;
+}
+
+.btn-edit:hover {
+  background: #F57C00;
+  transform: translateY(-2px);
+}
+
+.btn-new {
+  background: #9C27B0;
+  color: white;
+}
+
+.btn-new:hover {
+  background: #7B1FA2;
+  transform: translateY(-2px);
+}
+
+.btn-back {
+  background: #6B7280;
+  color: white;
+}
+
+.btn-back:hover {
+  background: #4B5563;
+  transform: translateY(-2px);
+}
+
+/* Loading Receipt State */
+.loading-receipt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  color: #4a5568;
+  background: white;
+  border-radius: 12px;
+  margin: 2rem auto;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loading-spinner {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Receipt Form Container */
+.receipt-form {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+/* Receipt Styles */
+.receipt {
+  width: 1000px;
+  max-width: 100%;
+  background: var(--paper);
+  border: 3px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  padding: 4px;
+  box-sizing: border-box;
+  font-family: 'Noto Sans Gujarati', 'Noto Sans', Arial, sans-serif;
+  margin: 0 auto;
+}
+
+/* Header Section */
+
+.receipt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: var(--header-bg);
+  color: #ffffff;
+  padding: 4px 8px;
+  box-sizing: border-box;
+  margin: 0;
+  height: 70px;
+  min-height: 70px;
+  max-height: 70px;
+}
+
+.receipt-header .left {
+  flex: 0 0 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  position: relative;
+}
+
+.receipt-header .right {
+  flex: 0 0 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  position: relative;
+}
+
+/* Image Logo Styles */
+.receipt-header .left .logo-container {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  border: none;
+  box-sizing: border-box;
+  padding: 5px;
+  background: #ffffff;
+  position: absolute;
+  top: 40%;
+  left: 30px;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.receipt-header .right .logo-container {
+  width: 100px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  overflow: visible;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  padding: 3px;
+  background: #ffffff;
+  position: absolute;
+  top: 50%;
+  right: 30px;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.receipt-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 2px;
+}
+
+.left-logo {
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+.right-logo {
+  background: #ffffff;
+  object-fit: cover;
+}
+
+.receipt-header .title {
+  flex: 1;
+  text-align: center;
+  font-weight: 700;
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: 0.5px;
+}
+
+/* Devotional Line */
+.devotional-line {
+  background: #fff;
+  text-align: center;
+  padding: 4px 6px;
+  margin: 0;
+  font-size: 16px;
+  color: #000000;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Contact Information */
+.contact-info {
+  background: #fff;
+  text-align: center;
+  padding: 2px 6px;
+  border-bottom: 1px solid var(--border);
+  margin: 0;
+}
+
+.contact-line {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  margin: 1px 0;
+  line-height: 1.2;
+}
+
+/* Separator */
+.separator {
+  height: 1px;
+  background: var(--border);
+  margin: 0;
+}
+
+/* Form Area */
+.receipt-form-area {
+  padding: 6px 6px 0 6px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.form-row label {
+  width: 120px;
+  font-weight: 700;
+}
+
+.form-row .input-line {
+  flex: 1;
+  border: none;
+  border-bottom: 2px solid var(--border);
+  padding: 4px 6px;
+  height: 24px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.form-row .input-line:focus {
+  border-bottom-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.form-row .input-line:read-only {
+  border-bottom: 2px solid #999;
+  background: #f9f9f9;
+}
+
+/* Specific styling for read-only receipt number field */
+.receipt-no-readonly {
+  background-color: #f3f4f6 !important;
+  color: #4b5563 !important;
+  cursor: not-allowed !important;
+  font-weight: 600 !important;
+  border-bottom-color: #9ca3af !important;
+}
+
+.receipt-no-readonly:focus {
+  background-color: #f3f4f6 !important;
+  border-bottom-color: #6b7280 !important;
+  outline: none !important;
+}
+
+.form-row .input-line::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.date-input {
+  width: 140px;
+  max-width: 140px;
+  min-width: 140px;
+  text-align: center;
+  font-size: 2rem;
+  padding: 2px;
+  box-sizing: border-box;
+}
+
+/* Payment Dropdown */
+.payment-dropdown {
+  width: 190px;
+  padding: 4px 6px;
+  height: 32px;
+  border: none;
+  border-bottom: 2px solid var(--border);
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  outline: none;
+  margin-right: 10px;
+}
+
+.payment-dropdown:focus {
+  border-bottom-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.payment-dropdown:disabled {
+  border-bottom-color: #999;
+  background: #f9f9f9;
+}
+
+/* Donations Table */
+.donation {
+  margin-top: 8px;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.donation thead th {
+  background: var(--accent);
+  border: 2px solid var(--border);
+  padding: 2px 6px;
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.2rem !important;
+  height: 24px;
+  vertical-align: middle;
+}
+
+.donation tbody td {
+  border: 2px solid var(--border);
+  padding: 2px 8px;
+  vertical-align: middle;
+  height: 15px;
+}
+
+.donation .col-no {
+  width: 45px !important;
+  min-width: 45px;
+  max-width: 45px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.donation .col-desc {
+  width: 75%;
+  font-size: 0.9rem;
+}
+
+.donation .col-amt {
+  width: 18%;
+  text-align: right;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.donation .col-amt input {
+  text-align: right;
+  width: 100%;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-weight: normal;
+}
+
+.donation thead th.col-amt {
+  text-align: center;
+}
+
+.donation input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #666;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 2px;
+  outline: none;
+}
+
+.donation input:focus {
+  border-bottom-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.donation input:read-only {
+  background: #f9f9f9;
+  border-bottom-color: #999;
+}
+
+/* Inline input field styling for donation1Purpose */
+.donation .col-desc input {
+  border: none;
+  border-bottom: 1px solid #666;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.9rem;
+  padding: 1px 4px;
+  width: 120px;
+  text-align: center;
+  outline: none;
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+.donation .col-desc input:focus {
+  border-bottom-color: #4CAF50;
+  background: rgba(76, 175, 80, 0.05);
+}
+
+.donation .col-desc input:read-only {
+  background: #f9f9f9;
+  border-bottom-color: #999;
+}
+
+.donation .total-row td {
+  font-weight: 700 !important;
+  font-size: 18px !important;
+  text-align: right;
+  padding: 1px 8px;
+  height: 18px;
+  vertical-align: middle;
+}
+
+.donation .total-row td:first-child {
+  font-weight: normal !important;
+}
+
+/* Signature Section */
+.footer-sign {
+  margin-top: 30px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 12px;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+
+/* Print Styles */
+@media print {
+  /* Print-specific font loading */
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;600;700&display=block');
+  
+  /* Hide all non-receipt elements */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Ensure body has proper styling for print */
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: 'Noto Sans Gujarati', 'Noto Sans', Arial, sans-serif !important;
+    color: #000 !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Hide navbar and header elements */
+  .navbar-container,
+  .scrolling-banner,
+  .sidebar,
+  header,
+  nav {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  .create-receipt-container {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    min-height: auto !important;
+    position: relative !important;
+    visibility: visible !important;
+  }
+
+  /* Add horizontal dashed line in center of A4 page - full width */
+  .create-receipt-container::after {
+    content: "" !important;
+    position: fixed !important;
+    top: 148.5mm !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    height: 1px !important;
+    background: transparent !important;
+    border-top: 1px dashed #000 !important;
+    z-index: 1000 !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .receipt-actions,
+  .preview-actions,
+  .no-print,
+  .page-title {
+    display: none !important;
+  }
+
+  .receipt-form {
+    padding: 0 !important;
+    visibility: visible !important;
+  }
+
+  .receipt,
+  .receipt * {
+    visibility: visible !important;
+  }
+
+  .receipt {
+    box-shadow: none !important;
+    border: 3px solid #000 !important;
+    border-radius: 0 !important;
+    margin: 15mm auto 0 auto !important;
+    padding: 5px !important;
+    max-width: 200mm !important;
+    width: 200mm !important;
+    height: auto !important;
+    max-height: 135mm !important;
+    font-size: 11pt !important;
+    page-break-after: avoid !important;
+    transform: none !important;
+    background: white !important;
+    color: #000 !important;
+    font-family: 'Noto Sans Gujarati', 'Noto Sans', Arial, sans-serif !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+  }
+
+  /* Add "Original receipt" header above receipt in print mode */
+  .receipt::before {
+    content: "Original receipt" !important;
+    position: absolute !important;
+    top: -8mm !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    text-align: center !important;
+    font-family: 'Noto Sans Gujarati', 'Noto Sans', Arial, sans-serif !important;
+    width: 100% !important;
+    display: block !important;
+  }
+
+  /* Header for print - optimized size */
+  .receipt-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 8px !important;
+    height: 60px !important;
+    min-height: 60px !important;
+    max-height: 60px !important;
+    padding: 4px 8px !important;
+    background: #000 !important;
+    color: #ffffff !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .receipt-header .title {
+    flex: 1 !important;
+    text-align: center !important;
+    font-size: 18px !important;
+    line-height: 1.1 !important;
+    letter-spacing: 0.5px !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+  
+  .receipt-header .left {
+    flex: 0 0 100px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 60px !important;
+    position: relative !important;
+  }
+
+  .receipt-header .right {
+    flex: 0 0 80px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 60px !important;
+    position: relative !important;
+  }
+
+  .logo-placeholder {
+    width: 55px !important;
+    height: 55px !important;
+    font-size: 26px !important;
+  }
+
+  .receipt-header .left .logo-container {
+    width: 90px !important;
+    height: 90px !important;
+    padding: 4px !important;
+    background: #ffffff !important;
+    border: none !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    position: absolute !important;
+    top: 40% !important;
+    left: 20px !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+  }
+
+  .receipt-header .right .logo-container {
+    width: 75px !important;
+    height: 90px !important;
+    padding: 3px !important;
+    background: #ffffff !important;
+    border: 1px solid #ccc !important;
+    box-sizing: border-box !important;
+    position: absolute !important;
+    top: 50% !important;
+    right: 20px !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+  }
+  
+  .receipt-header .left .logo-container {
+    border-radius: 50% !important;
+  }
+  
+  .receipt-logo {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    display: block !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .left-logo {
+    border-radius: 50% !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+  }
+
+  .right-logo {
+    background: #ffffff !important;
+    object-fit: cover !important;
+  }
+
+  .date-input {
+    width: 120px !important;
+    max-width: 120px !important;
+    min-width: 120px !important;
+    text-align: center !important;
+    font-size: 10px !important;
+    padding: 1px !important;
+    box-sizing: border-box !important;
+  }
+  
+  .payment-dropdown {
+    width: 160px !important;
+    padding: 1px 3px !important;
+    height: 20px !important;
+    border: none !important;
+    border-bottom: 2px solid #000 !important;
+    background: transparent !important;
+    font-family: inherit !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    outline: none !important;
+    margin-right: 5px !important;
+  }
+
+  .devotional-line {
+    background: #fff !important;
+    text-align: center !important;
+    padding: 4px 6px !important;
+    margin: 0 !important;
+    font-size: 14px !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+    border-bottom: 1px solid #000 !important;
+  }
+
+  .contact-info {
+    background: #fff !important;
+    text-align: center !important;
+    padding: 2px 6px !important;
+    border-bottom: 1px solid #000 !important;
+    margin: 0 !important;
+  }
+
+  .contact-line {
+    font-size: 10px !important;
+    color: #7b7b7b !important;
+    font-weight: 600 !important;
+    margin: 1px 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  .receipt-form-area {
+    padding: 3px 3px 0 3px !important;
+  }
+
+  .form-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    margin-bottom: 3px !important;
+  }
+
+  .form-row label {
+    width: 110px !important;
+    font-weight: 700 !important;
+    font-size: 10px !important;
+  }
+
+  .form-row .input-line {
+    flex: 1 !important;
+    border: none !important;
+    border-bottom: 2px solid #000 !important;
+    padding: 1px 3px !important;
+    height: 16px !important;
+    background: transparent !important;
+    font-family: inherit !important;
+    font-size: 10px !important;
+    outline: none !important;
+  }
+
+  .donation {
+    margin-top: 3px !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  .donation thead th {
+    background: #d9d9d9 !important;
+    border: 2px solid #000 !important;
+    padding: 1px 3px !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    font-size: 10px !important;
+    height: 18px !important;
+    vertical-align: middle !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .donation tbody td {
+    border: 2px solid #000 !important;
+    padding: 1px 4px !important;
+    vertical-align: middle !important;
+    height: 12px !important;
+    font-size: 9px !important;
+  }
+
+  .donation .total-row td {
+    font-weight: 700 !important;
+    font-size: 11px !important;
+    text-align: right !important;
+    padding: 1px 4px !important;
+    height: 14px !important;
+    vertical-align: middle !important;
+  }
+
+  .footer-sign {
+    margin-top: 8px !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding-right: 10px !important;
+    font-weight: 800 !important;
+    font-size: 11px !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: calc(100% - 8px) !important;
+    text-align: right !important;
+  }
+
+  /* Ensure no page breaks within receipt */
+  .receipt-form-area, 
+  .donation,
+  .receipt {
+    page-break-inside: avoid !important;
+  }
+
+  /* Ensure all text elements have proper font fallbacks */
+  .receipt *,
+  .devotional-line,
+  .receipt-header .title,
+  .contact-line,
+  .form-row label,
+  .input-line,
+  .donation,
+  .footer-sign {
+    font-family: 'Noto Sans Gujarati', 'Noto Sans', Arial, sans-serif !important;
+    color: #000 !important;
+  }
+  
+  /* Ensure backgrounds and colors print correctly */
+  .receipt-header {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .receipt-header * {
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .donation thead th {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: #d9d9d9 !important;
+    color: #000 !important;
+  }
+
+  /* A4 page setup - receipt in top half */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  
+  /* Additional print-specific styles */
+  .donation .col-no {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    font-size: 9px !important;
+  }
+
+  .donation .col-desc {
+    width: 75% !important;
+    font-size: 9px !important;
+  }
+
+  .donation .col-amt {
+    width: 18% !important;
+    text-align: right !important;
+    font-weight: 700 !important;
+    font-size: 9px !important;
+  }
+  
+  .donation .col-amt input {
+    text-align: right !important;
+    width: 100% !important;
+    border: none !important;
+    background: transparent !important;
+    outline: none !important;
+    font-weight: normal !important;
+    font-size: 9px !important;
+  }
+  
+  .donation .total-row td:first-child {
+    font-weight: normal !important;
+    text-align: left !important;
+    padding-left: 8px !important;
+  }
+  
+  .donation input {
+    width: 100% !important;
+    border: none !important;
+    border-bottom: 1px solid #666 !important;
+    background: transparent !important;
+    font-family: inherit !important;
+    font-size: 9px !important;
+    padding: 1px !important;
+    outline: none !important;
+  }
+  
+  .donation .col-desc input {
+    border: none !important;
+    border-bottom: 1px solid #666 !important;
+    background: transparent !important;
+    font-family: inherit !important;
+    font-size: 9px !important;
+    padding: 1px 2px !important;
+    width: 90px !important;
+    text-align: center !important;
+    outline: none !important;
+    display: inline-block !important;
+    vertical-align: baseline !important;
+  }
+}
+
+/* Hide duplicate receipt on screen only */
+.copy-receipt {
+  display: none !important;
+}
+
+/* Show duplicate receipt when printing */
+@media print {
+  .copy-receipt {
+    display: block !important;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .create-receipt-container {
+    padding: 1rem;
+    margin-top: 20px;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 200px;
+    justify-content: center;
+  }
+
+  .receipt {
+    padding: 20px 15px;
+  }
+
+  .receipt-header .title {
+    font-size: 1.2rem;
+  }
+
+  .form-row {
+    padding: 8px 3px;
+    font-size: 0.9rem;
+  }
+
+  .form-row .input-line {
+    font-size: 0.9rem;
+  }
+
+  .devotional-line {
+    font-size: 1rem;
+    padding: 3px 4px;
+    font-weight: 700;
+  }
+
+  .donation th,
+  .donation tbody td {
+    padding: 8px 5px;
+    font-size: 0.9rem;
+  }
+  
+  .donation .total-row td {
+    font-size: 1.2rem !important;
+    font-weight: 700 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .receipt {
+    padding: 15px 10px;
+  }
+
+
+  .receipt-header .title {
+    font-size: 1rem;
+  }
+
+
+  .form-row {
+    padding: 5px 2px;
+    font-size: 0.8rem;
+  }
+
+  .devotional-line {
+    font-size: 0.9rem;
+    padding: 2px 3px;
+    font-weight: 700;
+  }
+
+  .donation th,
+  .donation tbody td {
+    padding: 6px 3px;
+    font-size: 0.8rem;
+  }
+  
+  .donation .total-row td {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+  }
+
+  .footer-sign {
+    font-size: 0.9rem;
+    margin-top: 35px;
+  }
+}
+
+/* Smooth Transitions */
+* {
+  transition: all 0.2s ease;
+}
