@@ -9,7 +9,8 @@ import "../addarea/Area.css";
 
 const AddVillage = () => {
   const [villages, setVillages] = useState([]);
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState(""); // Input field value
+  const [searchTerm, setSearchTerm] = useState(""); // Actual search term for API
   const [newVillage, setNewVillage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -56,8 +57,13 @@ const AddVillage = () => {
   };
 
   useEffect(() => {
-    fetchVillages(currentPage, search);
-  }, [currentPage, search]);
+    fetchVillages(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
+
+  const handleSearch = () => {
+    setSearchTerm(searchInput);
+    setCurrentPage(1);
+  };
 
   const handleAddVillage = async () => {
     if (newVillage.trim()) {
@@ -70,7 +76,7 @@ const AddVillage = () => {
             loadingMessage: "Adding village...",
             onSuccess: () => {
               setNewVillage("");
-              fetchVillages(currentPage, search);
+              fetchVillages(currentPage, searchTerm);
             },
             onError: (error) => {
               const status = error.originalError?.response?.status;
@@ -123,7 +129,7 @@ const AddVillage = () => {
         {
           loadingMessage: "Deleting village...",
           onSuccess: () => {
-            fetchVillages(currentPage, search);
+            fetchVillages(currentPage, searchTerm);
             setOverlayState({
               isVisible: true,
               message: "Village deleted successfully.",
@@ -164,7 +170,7 @@ const AddVillage = () => {
   // Loading and error handlers
   const handleVillagesRetry = () => {
     resetVillagesCall();
-    fetchVillages(currentPage, search);
+    fetchVillages(currentPage, searchTerm);
   };
 
   const handleActionRetry = () => {
@@ -246,15 +252,22 @@ const AddVillage = () => {
       {/* Right - Show/Search Villages */}
       <div className="addarea-right">
         <h2>Village List</h2>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setCurrentPage(1);
-          }}
-          placeholder="Search villages"
-        />
+        <div className="search-container">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }}
+            placeholder="Search villages"
+          />
+          <button onClick={handleSearch} className="search-button">
+            Search
+          </button>
+        </div>
 
         <ul className="area-list">
           {villages.length > 0 ? (

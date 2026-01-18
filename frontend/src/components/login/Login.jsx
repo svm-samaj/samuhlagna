@@ -7,6 +7,7 @@ import './Login.css';
 const Login = () => {
   const [userid, setUserid] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -113,13 +114,23 @@ const Login = () => {
           />
 
           <label>Password</label>
+          <div className="password-input-wrapper">
           <input
-            type="password"
+              type={showPassword ? "text" : "password"}
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+            <button
+              type="button"
+              className="password-toggle-btn"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? '👁️' : '👁️‍🗨️'}
+            </button>
+          </div>
 
           {error && <p className="login-error">{error}</p>}
 

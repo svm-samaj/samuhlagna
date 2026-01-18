@@ -1,13 +1,29 @@
+/*
+ * ⚠️ WARNING: CREATE RECEIPT COMPONENT - HANDLE WITH CARE ⚠️
+ * 
+ * This component has complex UI alignment and dependencies.
+ * Any changes to the following can break the receipt layout:
+ * 
+ * CRITICAL DEPENDENCIES (DO NOT MODIFY WITHOUT TESTING):
+ * - StatusOverlay (../../common/StatusOverlay) - Used for popups
+ * - AuthContext (../../../contexts/AuthContext) - Login state
+ * - API_URLS (../../../utils/fetchurl) - All API endpoints
+ * - errorHandler (../../../utils/errorHandler) - Error handling
+ * - CreateReceipt.css - All styling for this component
+ * 
+ * If you need to modify shared components, test Create Receipt thoroughly!
+ */
+
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../../contexts/AuthContext';
+import { useAuth } from '../../../contexts/AuthContext';  // ⚠️ Shared - affects all pages
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import StatusOverlay from '../../common/StatusOverlay';
+import StatusOverlay from '../../common/StatusOverlay';  // ⚠️ Shared - affects all pages
 import SiddhapurLogo from '../../../assets/images/Siddhapur_Logo_01.png';
 import OrganizationLogo from '../../../assets/images/organization-logo.bmp';
-import { API_URLS } from '../../../utils/fetchurl';
-import { handleAPIError, formatPermissionMessage } from '../../../utils/errorHandler';
+import { API_URLS } from '../../../utils/fetchurl';  // ⚠️ Shared - affects all API calls
+import { handleAPIError, formatPermissionMessage } from '../../../utils/errorHandler';  // ⚠️ Shared error handling
 import axios from 'axios';
-import './CreateReceipt.css';
+import './CreateReceipt.css';  // ⚠️ Component-specific CSS - safe to modify
 
 // Function to convert numbers to English words
 const numberToEnglishWords = (num) => {
@@ -50,6 +66,8 @@ const CreateReceipt = () => {
     paymentMode: '',
     paymentDetails: '',
     donation1Purpose: '',
+    donation1PurposeNumber: '', // New field for number input
+    donation1PurposeType: '', // New field for dropdown
     donation1: '',
     donation2: '',
     total: ''
@@ -127,6 +145,28 @@ const CreateReceipt = () => {
     }
   }, [searchParams]);
 
+  // Auto-concatenate donation1Purpose from number + "th" + type
+  useEffect(() => {
+    const { donation1PurposeNumber, donation1PurposeType } = receiptData;
+    let concatenated = '';
+    
+    if (donation1PurposeNumber && donation1PurposeType) {
+      concatenated = `${donation1PurposeNumber} th ${donation1PurposeType}`;
+    } else if (donation1PurposeNumber) {
+      concatenated = `${donation1PurposeNumber} th`;
+    } else if (donation1PurposeType) {
+      concatenated = donation1PurposeType;
+    }
+    
+    // Only update if the concatenated value is different from current
+    if (concatenated !== receiptData.donation1Purpose) {
+      setReceiptData(prev => ({
+        ...prev,
+        donation1Purpose: concatenated
+      }));
+    }
+  }, [receiptData.donation1PurposeNumber, receiptData.donation1PurposeType]);
+
   // Auto-calculate total when donations change
   useEffect(() => {
     const donation1Amount = parseFloat(getNumericValue(receiptData.donation1)) || 0;
@@ -186,6 +226,24 @@ const CreateReceipt = () => {
         const receipt = response.data.data;
         console.log('Loaded receipt data:', receipt);
         
+        // Parse donation1_purpose back into number and type
+        let purposeNumber = '';
+        let purposeType = '';
+        if (receipt.donation1_purpose) {
+          // Try to parse format: "NUMBER th TYPE"
+          const match = receipt.donation1_purpose.match(/^(.+?)\s+th\s+(.+)$/);
+          if (match) {
+            purposeNumber = match[1].trim();
+            purposeType = match[2].trim();
+          } else if (receipt.donation1_purpose.includes(' th')) {
+            // Format: "NUMBER th" (no type)
+            purposeNumber = receipt.donation1_purpose.replace(' th', '').trim();
+          } else {
+            // Just the type without number
+            purposeType = receipt.donation1_purpose;
+          }
+        }
+        
         // Map backend data to frontend format
         setReceiptData({
           receiptNo: receipt.receipt_no,
@@ -200,6 +258,8 @@ const CreateReceipt = () => {
                       receipt.payment_mode === 'Online' ? 'ઓનલાઈન / Online' : 'કેશ / Cash',
           paymentDetails: receipt.payment_details || '',
           donation1Purpose: receipt.donation1_purpose || '',
+          donation1PurposeNumber: purposeNumber,
+          donation1PurposeType: purposeType,
           donation1: receipt.donation1_amount ? formatIndianNumber(receipt.donation1_amount.toString()) : '',
           donation2: receipt.donation2_amount ? formatIndianNumber(receipt.donation2_amount.toString()) : '',
           total: receipt.total_amount ? formatIndianNumber(receipt.total_amount.toString()) : ''
@@ -498,22 +558,22 @@ const CreateReceipt = () => {
         .footer-sign { 
           margin-top: 8px !important; 
           padding-right: 10px !important; 
-          font-size: 11px !important;
+          font-size: 13px !important;
           font-weight: 800 !important;
         }
         .donation thead th { 
           background: #d9d9d9 !important; 
           color: #000 !important; 
           border: 2px solid #000 !important;
-          font-size: 10px !important;
+          font-size: 12px !important;
           height: 18px !important;
           padding: 1px 3px !important;
         }
         .devotional-line { font-size: 14px !important; }
         .contact-line { font-size: 10px !important; }
-        .form-row label { font-size: 10px !important; }
-        .form-row .input-line { font-size: 10px !important; height: 16px !important; padding: 1px 3px !important; }
-        .donation tbody td { font-size: 9px !important; height: 12px !important; padding: 1px 4px !important; }
+        .form-row label { font-size: 12px !important; }
+        .form-row .input-line { font-size: 12px !important; height: 16px !important; padding: 1px 3px !important; }
+        .donation tbody td { font-size: 11px !important; height: 12px !important; padding: 1px 4px !important; }
         .donation .total-row td { font-size: 11px !important; height: 14px !important; padding: 1px 4px !important; }
         .donation .total-row td:first-child { text-align: left !important; padding-left: 8px !important; font-weight: normal !important; }
         .form-row { margin-bottom: 3px !important; gap: 4px !important; }
@@ -605,6 +665,8 @@ const CreateReceipt = () => {
       paymentMode: '',
       paymentDetails: '',
       donation1Purpose: '',
+      donation1PurposeNumber: '',
+      donation1PurposeType: '',
       donation1: '',
       donation2: '',
       total: ''
@@ -659,9 +721,11 @@ const CreateReceipt = () => {
         <div className="receipt-actions no-print">
           <h1 className="page-title">Receipt Preview</h1>
           <div className="action-buttons">
-            <button onClick={() => setIsPreviewMode(false)} className="btn btn-edit">
-              ✏️ Edit Receipt
-            </button>
+            {cameFromModifyList && (
+              <button onClick={() => setIsPreviewMode(false)} className="btn btn-edit">
+                ✏️ Edit Receipt
+              </button>
+            )}
             <button onClick={handlePrintReceipt} className="btn btn-print">
               🖨️ Print Receipt
             </button>
@@ -731,7 +795,7 @@ const CreateReceipt = () => {
                 title="Receipt number is auto-generated and cannot be edited"
               />
               <div style={{flex: 1}}></div>
-              <label style={{width: '40px', marginLeft: '80px'}}>તારીખ</label>
+              <label style={{width: '40px', marginLeft: '80px'}}>તારીખ :</label>
               <input
                 className="input-line date-input"
                 type="date"
@@ -744,7 +808,7 @@ const CreateReceipt = () => {
             </div>
             
             <div className="form-row">
-              <label>શ્રી/શ્રીમતી,</label>
+              <label>શ્રી/શ્રીમતી :</label>
               <input
                 className="input-line"
                 type="text"
@@ -790,7 +854,7 @@ const CreateReceipt = () => {
                 placeholder="Mobile Number"
                 readOnly={isPreviewMode}
               />
-              <label style={{width: '90px'}}>સરનામું</label>
+              <label style={{width: '90px'}}>સરનામું :</label>
               <input
                 className="input-line"
                 type="text"
@@ -841,40 +905,70 @@ const CreateReceipt = () => {
               <tr>
                 <td className="col-no">1</td>
                 <td className="col-desc">
-                  કંડોગ્રીઃ (કોર્પસ ફંડ) / 
                   <input
                     type="text"
-                    name="donation1Purpose"
-                    value={receiptData.donation1Purpose}
+                    name="donation1PurposeNumber"
+                    value={receiptData.donation1PurposeNumber}
                     onChange={handleInputChange}
-                    placeholder="ખર્ચ પ્રકાર લખો"
+                    placeholder="Number"
                     readOnly={isPreviewMode}
+                    style={{width: '60px', marginRight: '5px'}}
                   />
-                  સમૂહ લગ્ન ખર્ચ / દાન ભેટ
+                  <span style={{marginRight: '5px'}}>th</span>
+                  <select
+                    name="donation1PurposeType"
+                    value={receiptData.donation1PurposeType}
+                    onChange={handleInputChange}
+                    disabled={isPreviewMode}
+                    style={{width: 'auto', minWidth: '150px'}}
+                  >
+                    <option value="">Select Purpose</option>
+                    <option value="Anya Dan">Anya Dan</option>
+                    <option value="Bhada Pete Dan">Bhada Pete Dan</option>
+                    <option value="Bhojan Dan">Bhojan Dan</option>
+                    <option value="Cha-Pani Kharch Dan">Cha-Pani Kharch Dan</option>
+                    <option value="Dan Bhet">Dan Bhet</option>
+                    <option value="Fulhar Karch Dan">Fulhar Karch Dan</option>
+                    <option value="Kankotri Dan">Kankotri Dan</option>
+                    <option value="Kanya Dan">Kanya Dan</option>
+                    <option value="Mandap Dan">Mandap Dan</option>
+                    <option value="Mineral Water Dan">Mineral Water Dan</option>
+                    <option value="Pujapa Kharch Dan">Pujapa Kharch Dan</option>
+                    <option value="Purant Dan Pete">Purant Dan Pete</option>
+                    <option value="Sampurn Kharch Dan">Sampurn Kharch Dan</option>
+                    <option value="Servani Kharch Dan">Servani Kharch Dan</option>
+                    <option value="Stage Chori Kharch Dan">Stage Chori Kharch Dan</option>
+                  </select>
                 </td>
                 <td className="col-amt">
-                  <input
-                    type="text"
-                    name="donation1"
-                    value={receiptData.donation1}
-                    onChange={handleInputChange}
-                    placeholder="Amount"
-                    readOnly={isPreviewMode}
-                  />
+                  <div className="amount-input-wrapper">
+                    <input
+                      type="text"
+                      name="donation1"
+                      value={receiptData.donation1}
+                      onChange={handleInputChange}
+                      placeholder="Amount"
+                      readOnly={isPreviewMode}
+                    />
+                    <span className="amount-suffix">/-</span>
+                  </div>
                 </td>
               </tr>
               <tr>
                 <td className="col-no">2</td>
                 <td className="col-desc">અન્ય દાન :</td>
                 <td className="col-amt">
-                  <input
-                    type="text"
-                    name="donation2"
-                    value={receiptData.donation2}
-                    onChange={handleInputChange}
-                    placeholder="Amount"
-                    readOnly={isPreviewMode}
-                  />
+                  <div className="amount-input-wrapper">
+                    <input
+                      type="text"
+                      name="donation2"
+                      value={receiptData.donation2}
+                      onChange={handleInputChange}
+                      placeholder="Amount"
+                      readOnly={isPreviewMode}
+                    />
+                    <span className="amount-suffix">/-</span>
+                  </div>
                 </td>
               </tr>
               <tr className="total-row">
@@ -884,14 +978,17 @@ const CreateReceipt = () => {
                 <td className="col-amt">
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%'}}>
                     <span style={{fontWeight:'bold', fontSize:'1rem'}}>કુલ</span>
-                    <input
-                      type="text"
-                      name="total"
-                      value={receiptData.total}
-                      onChange={handleInputChange}
-                      readOnly
-                      style={{width:'auto', minWidth:'60px', textAlign:'right', border:'none', background:'transparent', fontSize:'0.85rem', fontWeight:'normal'}}
-                    />
+                    <div className="amount-input-wrapper" style={{width:'auto', minWidth:'60px', position:'relative'}}>
+                      <input
+                        type="text"
+                        name="total"
+                        value={receiptData.total}
+                        onChange={handleInputChange}
+                        readOnly
+                        style={{width:'100%', textAlign:'right', border:'none', background:'transparent', fontSize:'0.85rem', fontWeight:'normal', paddingRight:'20px'}}
+                      />
+                      <span className="amount-suffix">/-</span>
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -956,7 +1053,7 @@ const CreateReceipt = () => {
                 title="Receipt number is auto-generated and cannot be edited"
               />
               <div style={{flex: 1}}></div>
-              <label style={{width: '40px', marginLeft: '80px'}}>તારીખ</label>
+              <label style={{width: '40px', marginLeft: '80px'}}>તારીખ :</label>
               <input
                 className="input-line date-input"
                 type="date"
@@ -969,7 +1066,7 @@ const CreateReceipt = () => {
             </div>
             
             <div className="form-row">
-              <label>શ્રી/શ્રીમતી,</label>
+              <label>શ્રી/શ્રીમતી :</label>
               <input
                 className="input-line"
                 type="text"
@@ -1015,7 +1112,7 @@ const CreateReceipt = () => {
                 placeholder="Mobile Number"
                 readOnly={isPreviewMode}
               />
-              <label style={{width: '90px'}}>સરનામું</label>
+              <label style={{width: '90px'}}>સરનામું :</label>
               <input
                 className="input-line"
                 type="text"
@@ -1066,40 +1163,70 @@ const CreateReceipt = () => {
               <tr>
                 <td className="col-no">1</td>
                 <td className="col-desc">
-                  કંડોગ્રીઃ (કોર્પસ ફંડ) / 
                   <input
                     type="text"
-                    name="donation1Purpose"
-                    value={receiptData.donation1Purpose}
+                    name="donation1PurposeNumber"
+                    value={receiptData.donation1PurposeNumber}
                     onChange={handleInputChange}
-                    placeholder="ખર્ચ પ્રકાર લખો"
+                    placeholder="Number"
                     readOnly={isPreviewMode}
+                    style={{width: '60px', marginRight: '5px'}}
                   />
-                  સમૂહ લગ્ન ખર્ચ / દાન ભેટ
+                  <span style={{marginRight: '5px'}}>th</span>
+                  <select
+                    name="donation1PurposeType"
+                    value={receiptData.donation1PurposeType}
+                    onChange={handleInputChange}
+                    disabled={isPreviewMode}
+                    style={{width: 'auto', minWidth: '150px'}}
+                  >
+                    <option value="">Select Purpose</option>
+                    <option value="Anya Dan">Anya Dan</option>
+                    <option value="Bhada Pete Dan">Bhada Pete Dan</option>
+                    <option value="Bhojan Dan">Bhojan Dan</option>
+                    <option value="Cha-Pani Kharch Dan">Cha-Pani Kharch Dan</option>
+                    <option value="Dan Bhet">Dan Bhet</option>
+                    <option value="Fulhar Karch Dan">Fulhar Karch Dan</option>
+                    <option value="Kankotri Dan">Kankotri Dan</option>
+                    <option value="Kanya Dan">Kanya Dan</option>
+                    <option value="Mandap Dan">Mandap Dan</option>
+                    <option value="Mineral Water Dan">Mineral Water Dan</option>
+                    <option value="Pujapa Kharch Dan">Pujapa Kharch Dan</option>
+                    <option value="Purant Dan Pete">Purant Dan Pete</option>
+                    <option value="Sampurn Kharch Dan">Sampurn Kharch Dan</option>
+                    <option value="Servani Kharch Dan">Servani Kharch Dan</option>
+                    <option value="Stage Chori Kharch Dan">Stage Chori Kharch Dan</option>
+                  </select>
                 </td>
                 <td className="col-amt">
-                  <input
-                    type="text"
-                    name="donation1"
-                    value={receiptData.donation1}
-                    onChange={handleInputChange}
-                    placeholder="Amount"
-                    readOnly={isPreviewMode}
-                  />
+                  <div className="amount-input-wrapper">
+                    <input
+                      type="text"
+                      name="donation1"
+                      value={receiptData.donation1}
+                      onChange={handleInputChange}
+                      placeholder="Amount"
+                      readOnly={isPreviewMode}
+                    />
+                    <span className="amount-suffix">/-</span>
+                  </div>
                 </td>
               </tr>
               <tr>
                 <td className="col-no">2</td>
                 <td className="col-desc">અન્ય દાન :</td>
                 <td className="col-amt">
-                  <input
-                    type="text"
-                    name="donation2"
-                    value={receiptData.donation2}
-                    onChange={handleInputChange}
-                    placeholder="Amount"
-                    readOnly={isPreviewMode}
-                  />
+                  <div className="amount-input-wrapper">
+                    <input
+                      type="text"
+                      name="donation2"
+                      value={receiptData.donation2}
+                      onChange={handleInputChange}
+                      placeholder="Amount"
+                      readOnly={isPreviewMode}
+                    />
+                    <span className="amount-suffix">/-</span>
+                  </div>
                 </td>
               </tr>
               <tr className="total-row">
@@ -1109,14 +1236,17 @@ const CreateReceipt = () => {
                 <td className="col-amt">
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', width:'100%'}}>
                     <span style={{fontWeight:'bold', fontSize:'1rem'}}>કુલ</span>
-                    <input
-                      type="text"
-                      name="total"
-                      value={receiptData.total}
-                      onChange={handleInputChange}
-                      readOnly
-                      style={{width:'auto', minWidth:'60px', textAlign:'right', border:'none', background:'transparent', fontSize:'0.85rem', fontWeight:'normal'}}
-                    />
+                    <div className="amount-input-wrapper" style={{width:'auto', minWidth:'60px', position:'relative'}}>
+                      <input
+                        type="text"
+                        name="total"
+                        value={receiptData.total}
+                        onChange={handleInputChange}
+                        readOnly
+                        style={{width:'100%', textAlign:'right', border:'none', background:'transparent', fontSize:'0.85rem', fontWeight:'normal', paddingRight:'20px'}}
+                      />
+                      <span className="amount-suffix">/-</span>
+                    </div>
                   </div>
                 </td>
               </tr>

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from datetime import timedelta
 
-from api_request_response.auth import UserLogin, UserCreate, UserRegister
+from api_request_response.auth import UserLogin, UserCreate, UserRegister, UserUpdate
 from manager import auth as auth_manager
 from login.security import create_access_token
 from login.config import settings
@@ -244,3 +244,37 @@ def get_all_users_controller(db_session: Session) -> Dict[str, Any]:
     except Exception as e:
         db_session.rollback()
         raise e
+
+
+def update_user_controller(user_id: int, user_data: UserUpdate, db_session: Session) -> Dict[str, Any]:
+    """Handle admin user update"""
+    try:
+        # Update user
+        updated_user = auth_manager.update_user(db_session, user_id, user_data)
+        
+        # Get updated roles
+        roles = auth_manager.get_user_roles(db_session, updated_user.id)
+        
+        response = {
+            "status": "success",
+            "message": "User updated successfully",
+            "data": {
+                "id": updated_user.id,
+                "username": updated_user.username,
+                "is_active": updated_user.is_active,
+                "is_superuser": updated_user.is_superuser,
+                "roles": roles,
+                "updated_at": updated_user.updated_at.isoformat() if updated_user.updated_at else None
+            }
+        }
+        
+        return response
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        db_session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error updating user: {str(e)}"
+        )

@@ -1,3 +1,12 @@
+/*
+ * ⚠️ GLOBAL API URL CONFIGURATION - Used by ALL components
+ * This file controls ALL backend API calls in the application.
+ * Changes here affect: Create Receipt, Reports, User Management, Areas, Villages, etc.
+ * 
+ * IMPORTANT: All components use API_URLS object from this file.
+ * Test all pages after modifying base URL or API endpoints!
+ */
+
 // Smart environment detection with fallbacks for GitHub Pages deployment
 
 // Validate and get base URL - SMART MODE with FORCED GitHub Pages detection
@@ -61,26 +70,30 @@ const getBaseUrl = () => {
   
   // Development environment
   if (detectedEnv === 'development') {
-    const apiUrl = devUrl || 'http://localhost:8000';
+    if (!devUrl) {
+      console.error('❌ VITE_DEV_API_URL is not set in .env file!');
+      throw new Error('Development API URL not configured. Please set VITE_DEV_API_URL in your .env file.');
+    }
     console.log('✅ Final Environment: development');
-    console.log('✅ Final API URL:', apiUrl);
-    return apiUrl;
+    console.log('✅ Final API URL:', devUrl);
+    return devUrl;
   }
   
   // Production environment (GitHub Pages, Render, etc.)
   if (detectedEnv === 'production') {
-    const apiUrl = prodUrl || 'https://samuhlagna-production.up.railway.app';
+    if (!prodUrl) {
+      console.error('❌ VITE_PROD_API_URL is not set in .env file!');
+      throw new Error('Production API URL not configured. Please set VITE_PROD_API_URL in your .env file.');
+    }
     console.log('✅ Final Environment: production');
-    console.log('✅ Final API URL:', apiUrl);
-    return apiUrl;
+    console.log('✅ Final API URL:', prodUrl);
+    return prodUrl;
   }
   
   // Fallback error (should never reach here)
   console.error(`❌ Invalid environment detected: ${detectedEnv}`);
-  // Force production as last resort
-  const fallbackUrl = 'https://samuhlagna-production.up.railway.app';
-  console.log('🆘 FALLBACK to production URL:', fallbackUrl);
-  return fallbackUrl;
+  console.error('❌ Please check your .env file configuration');
+  throw new Error(`Invalid environment: ${detectedEnv}. Please configure VITE_NODE_ENV, VITE_DEV_API_URL, and VITE_PROD_API_URL in your .env file.`);
 };
 
 // Environment information for debugging
@@ -182,6 +195,8 @@ export const API_URLS = {
   logout: () => `${getBaseUrl()}/auth/logout`,
   getCurrentUser: () => `${getBaseUrl()}/auth/me`,
   getAllUsers: () => `${getBaseUrl()}/auth/users`,  // Get all system users (admin only)
+  createUser: () => `${getBaseUrl()}/auth/create-user`,  // Create user (admin only)
+  updateUser: (id) => `${getBaseUrl()}/auth/users/${id}`,  // Update user (admin only)
   getReceiptCreators: () => `${getBaseUrl()}/receipts/creators`,  // Get users who have created receipts (for reports filtering)
   getReceiptReportsDropdown: () => `${getBaseUrl()}/receipts/reports/dropdown`,  // Get users with role IDs 1 & 5 for reports dropdown
   

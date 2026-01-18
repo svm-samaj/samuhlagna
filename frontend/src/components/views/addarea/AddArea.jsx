@@ -9,7 +9,8 @@ import "./Area.css";
 
 const AddArea = () => {
   const [areas, setAreas] = useState([]);
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState(""); // Input field value
+  const [searchTerm, setSearchTerm] = useState(""); // Actual search term for API
   const [newArea, setNewArea] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -56,8 +57,13 @@ const AddArea = () => {
   };
 
   useEffect(() => {
-    fetchAreas(currentPage, search);
-  }, [currentPage, search]);
+    fetchAreas(currentPage, searchTerm);
+  }, [currentPage, searchTerm]);
+
+  const handleSearch = () => {
+    setSearchTerm(searchInput);
+    setCurrentPage(1);
+  };
 
   const handleAddArea = async () => {
     if (newArea.trim()) {
@@ -70,7 +76,7 @@ const AddArea = () => {
             loadingMessage: "Adding area...",
             onSuccess: () => {
               setNewArea("");
-              fetchAreas(currentPage, search);
+              fetchAreas(currentPage, searchTerm);
             },
             onError: (error) => {
               const status = error.originalError?.response?.status;
@@ -123,7 +129,7 @@ const AddArea = () => {
         {
           loadingMessage: "Deleting area...",
           onSuccess: () => {
-            fetchAreas(currentPage, search);
+            fetchAreas(currentPage, searchTerm);
             setOverlayState({
               isVisible: true,
               message: "Area deleted successfully.",
@@ -164,7 +170,7 @@ const AddArea = () => {
   // Loading and error handlers
   const handleAreasRetry = () => {
     resetAreasCall();
-    fetchAreas(currentPage, search);
+    fetchAreas(currentPage, searchTerm);
   };
 
   const handleActionRetry = () => {
@@ -246,15 +252,22 @@ const AddArea = () => {
       {/* Right - Show/Search Areas */}
       <div className="addarea-right">
         <h2>Area List</h2>
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => {
-            setSearch(e.target.value);
-            setCurrentPage(1);
-          }}
-          placeholder="Search areas"
-        />
+        <div className="search-container">
+          <input
+            type="text"
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }}
+            placeholder="Search areas"
+          />
+          <button onClick={handleSearch} className="search-button">
+            Search
+          </button>
+        </div>
 
         <ul className="area-list">
           {areas.length > 0 ? (

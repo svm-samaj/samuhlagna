@@ -59,6 +59,7 @@ class UserResponse(BaseModel):
 
 class UserUpdate(BaseModel):
     is_active: Optional[bool] = None
+    is_superuser: Optional[bool] = None
     password: Optional[str] = None
     roles: Optional[List[str]] = None
 

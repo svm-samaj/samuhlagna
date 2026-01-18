@@ -1,7 +1,23 @@
+/* 
+ * ⚠️ WARNING: CREATE RECEIPT STYLES - HANDLE WITH CARE ⚠️
+ * 
+ * This CSS file contains all styling for the Create Receipt component.
+ * The receipt has precise layout and alignment requirements.
+ * 
+ * IMPORTANT NOTES:
+ * - These styles are SCOPED to Create Receipt component only
+ * - Modifying these classes WON'T affect other pages
+ * - Changes to global CSS (index.css, App.css) CAN affect this page
+ * - Font imports and CSS variables are critical for receipt formatting
+ * 
+ * SAFE TO MODIFY: All classes in this file
+ * NOT SAFE: Global CSS files, shared component styles
+ */
+
 /* Import Gujarati Font */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;600;700&display=swap');
 
-/* CSS Variables */
+/* CSS Variables - Used throughout this component */
 :root{
   --border:#000000;
   --header-bg: #000000;
@@ -310,6 +326,7 @@
 .form-row label {
   width: 120px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .form-row .input-line {
@@ -442,6 +459,29 @@
   background: transparent;
   outline: none;
   font-weight: normal;
+}
+
+/* Amount input wrapper for "/-" suffix */
+.amount-input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.amount-input-wrapper input {
+  padding-right: 28px !important; /* Make space for "/-" */
+}
+
+.amount-suffix {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-weight: 600;
+  color: #333;
+  pointer-events: none; /* Make it non-interactive */
+  user-select: none; /* Prevent text selection */
+  font-size: 0.85rem;
 }
 
 .donation thead th.col-amt {
@@ -741,7 +781,7 @@
     max-width: 120px !important;
     min-width: 120px !important;
     text-align: center !important;
-    font-size: 10px !important;
+    font-size: 12px !important;
     padding: 1px !important;
     box-sizing: border-box !important;
   }
@@ -754,7 +794,7 @@
     border-bottom: 2px solid #000 !important;
     background: transparent !important;
     font-family: inherit !important;
-    font-size: 10px !important;
+    font-size: 12px !important;
     font-weight: 600 !important;
     outline: none !important;
     margin-right: 5px !important;
@@ -801,7 +841,8 @@
   .form-row label {
     width: 110px !important;
     font-weight: 700 !important;
-    font-size: 10px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
   }
 
   .form-row .input-line {
@@ -812,7 +853,7 @@
     height: 16px !important;
     background: transparent !important;
     font-family: inherit !important;
-    font-size: 10px !important;
+    font-size: 12px !important;
     outline: none !important;
   }
 
@@ -828,7 +869,7 @@
     padding: 1px 3px !important;
     font-weight: 700 !important;
     text-align: center !important;
-    font-size: 10px !important;
+    font-size: 12px !important;
     height: 18px !important;
     vertical-align: middle !important;
     -webkit-print-color-adjust: exact !important;
@@ -840,7 +881,7 @@
     padding: 1px 4px !important;
     vertical-align: middle !important;
     height: 12px !important;
-    font-size: 9px !important;
+    font-size: 11px !important;
   }
 
   .donation .total-row td {
@@ -859,7 +900,7 @@
     align-items: center !important;
     padding-right: 10px !important;
     font-weight: 800 !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
     box-sizing: border-box !important;
     width: 100% !important;
     max-width: calc(100% - 8px) !important;
@@ -918,35 +959,84 @@
     max-width: 40px !important;
     text-align: center !important;
     font-weight: 700 !important;
-    font-size: 9px !important;
+    font-size: 11px !important;
   }
 
   .donation .col-desc {
     width: 75% !important;
-    font-size: 9px !important;
+    font-size: 11px !important;
   }
 
   .donation .col-amt {
     width: 18% !important;
     text-align: right !important;
     font-weight: 700 !important;
-    font-size: 9px !important;
+    font-size: 11px !important;
+    padding-right: 4px !important;
+    box-sizing: border-box !important;
   }
   
   .donation .col-amt input {
     text-align: right !important;
-    width: 100% !important;
     border: none !important;
     background: transparent !important;
     outline: none !important;
     font-weight: normal !important;
-    font-size: 9px !important;
+    font-size: 11px !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Amount suffix for print */
+  .donation .col-amt .amount-input-wrapper {
+    position: relative !important;
+    display: inline-block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .donation .col-amt .amount-input-wrapper input {
+    padding-right: 20px !important;
+    width: 100% !important;
+    text-align: right !important;
+    font-size: 11px !important;
+    box-sizing: border-box !important;
+  }
+
+  .donation .col-amt .amount-suffix {
+    position: absolute !important;
+    right: 3px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    font-weight: 600 !important;
+    color: #000 !important;
+    font-size: 8px !important;
+    pointer-events: none !important;
+    white-space: nowrap !important;
   }
   
   .donation .total-row td:first-child {
     font-weight: normal !important;
     text-align: left !important;
     padding-left: 8px !important;
+  }
+  
+  /* Total row amount wrapper adjustments */
+  .donation .total-row .amount-input-wrapper {
+    display: inline-block !important;
+    width: auto !important;
+    min-width: 60px !important;
+    max-width: none !important;
+  }
+  
+  .donation .total-row .amount-input-wrapper input {
+    padding-right: 20px !important;
+    font-size: 11px !important;
+    width: auto !important;
+  }
+  
+  .donation .total-row .amount-suffix {
+    font-size: 10px !important;
+    right: 4px !important;
   }
   
   .donation input {
@@ -965,7 +1055,7 @@
     border-bottom: 1px solid #666 !important;
     background: transparent !important;
     font-family: inherit !important;
-    font-size: 9px !important;
+    font-size: 11px !important;
     padding: 1px 2px !important;
     width: 90px !important;
     text-align: center !important;

@@ -36,7 +36,11 @@ const Navbar = () => {
           Shree Vishwakarma Dhandhar Mewada Suthar Samaj Samuh Lagna Trust Siddhpur
         </div>
       </div>
-
+        <div className="navbar-right">
+          <button className="navbar-logout-button" onClick={handleLogout} title="Logout">
+            ⏻
+          </button>
+        </div>
       </header>
 
       {/* Sidebar */}
@@ -63,6 +67,18 @@ const Navbar = () => {
         <Link to="/user" className="sidebar-link" onClick={closeSidebar}>Create User Data</Link>
         <Link to="/showuser" className="sidebar-link" onClick={closeSidebar}>Show User Data</Link>
         <Link to="/receipts" className="sidebar-link" onClick={closeSidebar}>Receipts</Link>
+        
+        {/* Admin Only Section */}
+        {user?.roles?.includes('admin') && (
+          <>
+            <div className="sidebar-divider"></div>
+            <div className="sidebar-section-title">Admin Panel</div>
+            <Link to="/admin/users" className="sidebar-link sidebar-link-admin" onClick={closeSidebar}>
+              👥 User Management
+            </Link>
+          </>
+        )}
+        
         <button className="login-button" onClick={handleLogout}>
           Log Out {user?.username ? `(${user.username})` : ''}
         </button>

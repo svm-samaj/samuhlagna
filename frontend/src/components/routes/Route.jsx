@@ -10,6 +10,7 @@ import Adduser from '../views/adduserdata/AddUser'
 import CreateReceipt from '../views/createreceipt/CreateReceipt'
 import ModifyReceipt from '../views/modifyreceipt/ModifyReceipt'
 import Reports from '../views/reports/Reports'
+import UserManagement from '../views/admin/UserManagement'
 import ProtectedRoute from '../auth/ProtectedRoute'
 
 const router = createHashRouter(
@@ -84,6 +85,14 @@ const router = createHashRouter(
         <ProtectedRoute>
           <Navbar />
           <Reports />
+        </ProtectedRoute>
+    },
+    {
+      path: "/admin/users",
+      element:
+        <ProtectedRoute>
+          <Navbar />
+          <UserManagement />
         </ProtectedRoute>
     },
     {

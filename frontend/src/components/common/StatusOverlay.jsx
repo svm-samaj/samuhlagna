@@ -1,3 +1,9 @@
+/*
+ * ⚠️ SHARED COMPONENT - Used by multiple pages including Create Receipt
+ * Changes here will affect: Create Receipt, Add Area, Add Village, Reports, etc.
+ * Test all pages after modifying this component!
+ */
+
 import React from 'react';
 import './StatusOverlay.css';
 

@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 
 from database import get_db
-from api_request_response.auth import UserLogin, UserCreate, UserRegister, TokenRefresh, Token
+from api_request_response.auth import UserLogin, UserCreate, UserRegister, TokenRefresh, Token, UserUpdate
 from login.dependencies import get_current_user, require_admin
 from controller import auth as auth_controller
 
@@ -136,6 +136,29 @@ async def get_all_users(
     """
     try:
         response = auth_controller.get_all_users_controller(db)
+        return response
+    except Exception as e:
+        raise
+
+
+@router.put("/users/{user_id}", status_code=status.HTTP_200_OK)
+async def update_user(
+    user_id: int,
+    user_data: UserUpdate,
+    db: db_dependency,
+    current_user: User = Depends(require_admin)
+):
+    """
+    Update user details (admin only)
+    Allows updating:
+    - is_active: Activate/Deactivate user
+    - password: Update user password
+    - roles: Update user roles
+    
+    Requires: admin role
+    """
+    try:
+        response = auth_controller.update_user_controller(user_id, user_data, db)
         return response
     except Exception as e:
         raise

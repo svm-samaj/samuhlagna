@@ -1,3 +1,10 @@
+/*
+ * ⚠️ SHARED ERROR HANDLER - Used by ALL components making API calls
+ * This utility is used by: Create Receipt, Reports, User Management, etc.
+ * Changes to error handling logic will affect how errors are displayed app-wide.
+ * Test all API interactions after modifying this file!
+ */
+
 /**
  * Centralized Error Handler for API Responses
  * Handles both HTTP errors and graceful permission errors

@@ -1,68 +1,135 @@
-📂 Backend Setup
-✅ Prerequisites
-Python 3.9+
+# SVMPS Frontend - Receipt Management System
 
-⚙️ Environment Setup
-Navigate to the backend folder and create a virtual environment:
+A comprehensive receipt management system for Shree Vishwakarma Dhandhar Mewada Suthar Samaj Samuh Lagna Trust, Siddhpur.
 
+## 📋 Project Overview
+
+This application manages donation receipts, user data, villages, and areas with role-based access control. Built with FastAPI (backend) and React (frontend).
+
+### Features
+- 👥 User Management (Admin Panel)
+- 🧾 Receipt Creation & Management
+- 📊 Reports & Analytics
+- 🏘️ Village & Area Management
+- 🔐 Role-Based Access Control
+- 📱 Responsive UI
+
+---
+
+## 📂 Backend Setup
+
+### ✅ Prerequisites
+- Python 3.9+
+
+### ⚙️ Environment Setup
+
+1. **Navigate to the backend folder and create a virtual environment:**
+   ```bash
 python -m venv env_be
+   ```
 Note: The virtual environment (env_be) is excluded via .gitignore.
 
-Activate the virtual environment:
+2. **Activate the virtual environment:**
 
-Windows (PowerShell):
-
-powershell
+   **Windows (PowerShell):**
+   ```powershell
 .\env_be\Scripts\Activate.ps1
-macOS/Linux:
+   ```
 
+   **macOS/Linux:**
+   ```bash
 source env_be/bin/activate
-Install the required dependencies:
+   ```
 
+3. **Install the required dependencies:**
+   ```bash
+   cd backend
 pip install -r requirements.txt
-Run the FastAPI server with Uvicorn:
+   ```
 
-uvicorn main:app --reload --port 8002
-The backend will be accessible at: https://samuhlagna-production.up.railway.app
+4. **Run the FastAPI server:**
+   ```bash
+   uvicorn main:app --reload --port 8000
+   ```
 
---------------------------------------------------------------------------------
+---
 
-💻 Frontend Setup
-✅ Prerequisites
-Node.js (v14+ recommended)
+## 💻 Frontend Setup
 
-⚙️ Environment Setup
-Navigate to the frontend folder:
+### ✅ Prerequisites
+- Node.js (v14+ recommended)
 
+### ⚙️ Environment Setup
+
+1. **Navigate to the frontend folder:**
+   ```bash
 cd frontend
-Install the frontend dependencies:
+   ```
+
+2. **⚠️ IMPORTANT: Create `.env` file**
+   
+   Create a `.env` file in the `frontend/` directory with these variables:
+   
+   ```env
+   VITE_NODE_ENV=development
+   VITE_DEV_API_URL=http://127.0.0.1:8000
+   VITE_PROD_API_URL=https://svmps-frontend.onrender.com
+   ```
+
+3. **Install frontend dependencies:**
+   ```bash
 npm install
+   ```
 
-Start the development server:
+4. **Start the development server:**
+   ```bash
 npm run dev
+   ```
 
-The frontend will be accessible at: http://localhost:3000
+   The frontend will be accessible at: `http://localhost:3000`
 
-to run and deploy the fresh frontend on git hub 
-# Clean and build
->> npm run build
->>
->> # Deploy
->> npm run deploy
->>
+### 🚀 Build & Deploy
 
--------------------------------------------------------------------------------
+**Build for production:**
+```bash
+npm run build:prod
+```
 
-📌 Notes
-Make sure to activate the Python environment every time before running the backend.
+**Deploy to GitHub Pages:**
+```bash
+npm run deploy
+```
 
-Default ports:
+---
 
-Backend: 8002
+## 🔧 Environment Configuration
 
-Frontend: 3000
+### Environment Variables
 
-Modify .env files or configuration as needed for your environment.
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `VITE_NODE_ENV` | Environment mode | `development` or `production` |
+| `VITE_DEV_API_URL` | Local backend URL | `http://127.0.0.1:8000` |
+| `VITE_PROD_API_URL` | Production backend URL | `https://svmps-frontend.onrender.com` |
+
+### Developer Tools (Browser Console)
+
+Test production backend locally:
+```javascript
+DEV_UTILS.forceProduction();  // Switch to production backend
+DEV_UTILS.useLocalBackend();  // Switch back to local
+DEV_UTILS.getStatus();         // Check current config
+```
+
+---
+
+## 📌 Important Notes
+
+- ✅ **Backend Port**: 8000 (development)
+- ✅ **Frontend Port**: 3000
+- ⚠️ **Environment File**: Must create `.env` in `frontend/` directory
+- ⚠️ **No Hardcoded URLs**: All API URLs use environment variables
+- ⚠️ **Git Ignored**: `.env` file is not committed to repository
 
 📁 Project Structure
 svmps_frontend/

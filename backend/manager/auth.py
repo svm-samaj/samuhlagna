@@ -145,6 +145,9 @@ def update_user(db_session: Session, user_id: int, user_data: UserUpdate) -> Use
     if user_data.is_active is not None:
         user.is_active = user_data.is_active
     
+    if user_data.is_superuser is not None:
+        user.is_superuser = user_data.is_superuser
+    
     if user_data.password:
         user.hashed_password = get_password_hash(user_data.password)
     

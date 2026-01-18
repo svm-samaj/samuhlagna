@@ -1,3 +1,10 @@
+/*
+ * ⚠️ GLOBAL AUTH CONTEXT - Used by ALL protected pages
+ * This context is used by: Login, Create Receipt, Reports, User Management, etc.
+ * Changes to login/logout logic will affect the entire application!
+ * Test thoroughly before deploying any changes.
+ */
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
