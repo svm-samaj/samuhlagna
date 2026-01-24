@@ -1,6 +1,6 @@
 # URL Management System
 
-This document explains how to use the centralized URL management system for the SVMPS frontend application.
+This document explains how to use the centralized URL management system for the Samuhlagna frontend application.
 
 ## Overview
 

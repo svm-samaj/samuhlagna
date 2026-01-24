@@ -145,17 +145,17 @@ const CreateReceipt = () => {
     }
   }, [searchParams]);
 
-  // Auto-concatenate donation1Purpose from number + "th" + type
+  // Auto-concatenate donation1Purpose from type + "-" + number + "મો લગ્ન"
   useEffect(() => {
     const { donation1PurposeNumber, donation1PurposeType } = receiptData;
     let concatenated = '';
     
-    if (donation1PurposeNumber && donation1PurposeType) {
-      concatenated = `${donation1PurposeNumber} th ${donation1PurposeType}`;
-    } else if (donation1PurposeNumber) {
-      concatenated = `${donation1PurposeNumber} th`;
+    if (donation1PurposeType && donation1PurposeNumber) {
+      concatenated = `${donation1PurposeType} - ${donation1PurposeNumber} મો લગ્ન`;
     } else if (donation1PurposeType) {
       concatenated = donation1PurposeType;
+    } else if (donation1PurposeNumber) {
+      concatenated = `- ${donation1PurposeNumber} મો લગ્ન`;
     }
     
     // Only update if the concatenated value is different from current
@@ -192,9 +192,8 @@ const CreateReceipt = () => {
   }, [receiptData.donation1, receiptData.donation2]);
 
   const generateReceiptNumber = () => {
-    // Generate placeholder receipt number showing user will get RCX/YYYY/XXXX format
-    const currentYear = new Date().getFullYear();
-    const receiptNo = `RCX/${currentYear}/XXXX`;
+    // Generate placeholder receipt number showing user will get A-XXXX format
+    const receiptNo = `A-XXXX`;
     
     setReceiptData(prev => ({
       ...prev,
@@ -230,17 +229,44 @@ const CreateReceipt = () => {
         let purposeNumber = '';
         let purposeType = '';
         if (receipt.donation1_purpose) {
-          // Try to parse format: "NUMBER th TYPE"
-          const match = receipt.donation1_purpose.match(/^(.+?)\s+th\s+(.+)$/);
-          if (match) {
-            purposeNumber = match[1].trim();
-            purposeType = match[2].trim();
-          } else if (receipt.donation1_purpose.includes(' th')) {
-            // Format: "NUMBER th" (no type)
-            purposeNumber = receipt.donation1_purpose.replace(' th', '').trim();
+          // Try to parse format: "TYPE - NUMBER મો લગ્ન"
+          const newMatch = receipt.donation1_purpose.match(/^(.+?)\s+-\s+(\d+)\s+મો લગ્ન$/);
+          if (newMatch) {
+            purposeType = newMatch[1].trim();
+            purposeNumber = newMatch[2].trim();
+          } else if (receipt.donation1_purpose.includes('મો લગ્ન')) {
+            // Format: "- NUMBER મો લગ્ન" (no type)
+            const numMatch = receipt.donation1_purpose.match(/-\s+(\d+)\s+મો લગ્ન/);
+            if (numMatch) {
+              purposeNumber = numMatch[1].trim();
+            }
+          } else if (receipt.donation1_purpose.includes('Mo lagan')) {
+            // Old English format: "TYPE - NUMBER Mo lagan"
+            const oldEnglishMatch = receipt.donation1_purpose.match(/^(.+?)\s+-\s+(\d+)\s+Mo lagan$/);
+            if (oldEnglishMatch) {
+              purposeType = oldEnglishMatch[1].trim();
+              purposeNumber = oldEnglishMatch[2].trim();
+            }
+          } else if (receipt.donation1_purpose.includes('મો') && receipt.donation1_purpose.includes('લગ્ન')) {
+            // Old Gujarati format without dash: "TYPE મો NUMBER લગ્ન"
+            const oldGujaratiMatch = receipt.donation1_purpose.match(/^(.+?)\s+મો\s+(\d+)\s+લગ્ન$/);
+            if (oldGujaratiMatch) {
+              purposeType = oldGujaratiMatch[1].trim();
+              purposeNumber = oldGujaratiMatch[2].trim();
+            }
           } else {
-            // Just the type without number
-            purposeType = receipt.donation1_purpose;
+            // Old format backward compatibility: "TYPE NUMBER th"
+            const oldMatch = receipt.donation1_purpose.match(/^(.+?)\s+(\d+)\s+th$/);
+            if (oldMatch) {
+              purposeType = oldMatch[1].trim();
+              purposeNumber = oldMatch[2].trim();
+            } else if (receipt.donation1_purpose.includes(' th')) {
+              // Format: "NUMBER th" (no type) - old format
+              purposeNumber = receipt.donation1_purpose.replace(' th', '').trim();
+            } else {
+              // Just the type without number
+              purposeType = receipt.donation1_purpose;
+            }
           }
         }
         
@@ -445,7 +471,7 @@ const CreateReceipt = () => {
         
         setReceiptData(prev => ({
           ...prev,
-          receiptNo: savedReceipt.receipt_no // This will be like "RCA/2025/0001" or "RC1/2025/0002"
+          receiptNo: savedReceipt.receipt_no // This will be like "A-0001" or "A-0002"
         }));
         
         // Store receipt ID and set states based on context
@@ -544,14 +570,15 @@ const CreateReceipt = () => {
           display: block !important;
         }
         .receipt-header { 
-          background: #000 !important; 
-          color: #ffffff !important; 
+          background: #d9d9d9 !important; 
+          color: #000000 !important; 
+          border: 3px solid #000000 !important;
           display: flex !important;
           height: 60px !important;
         }
-        .receipt-header * { color: #ffffff !important; }
+        .receipt-header * { color: #000000 !important; }
         .receipt-header .title { 
-          color: #ffffff !important; 
+          color: #000000 !important; 
           font-weight: 700 !important; 
           font-size: 18px !important;
         }
@@ -565,21 +592,27 @@ const CreateReceipt = () => {
           background: #d9d9d9 !important; 
           color: #000 !important; 
           border: 2px solid #000 !important;
-          font-size: 12px !important;
+          font-size: 14px !important;
           height: 18px !important;
           padding: 1px 3px !important;
+          text-align: center !important;
         }
         .devotional-line { font-size: 14px !important; }
         .contact-line { font-size: 10px !important; }
-        .form-row label { font-size: 12px !important; }
+        .form-row label { font-size: 14px !important; }
+        .form-row:has(.payment-dropdown) label { width: 170px !important; }
         .form-row .input-line { font-size: 12px !important; height: 16px !important; padding: 1px 3px !important; }
-        .donation tbody td { font-size: 11px !important; height: 12px !important; padding: 1px 4px !important; }
-        .donation .total-row td { font-size: 11px !important; height: 14px !important; padding: 1px 4px !important; }
+        .form-row:has(.payment-dropdown) .input-line { max-width: 200px !important; }
+        .form-row .input-line::placeholder, .donation input::placeholder { color: transparent !important; opacity: 0 !important; }
+        .receipt-no-readonly { font-weight: 700 !important; font-size: 13px !important; }
+        .donation tbody td { font-size: 13px !important; height: 10px !important; padding: 0px 3px !important; line-height: 1 !important; }
+        .donation .total-row td { font-size: 13px !important; height: 14px !important; padding: 1px 4px !important; }
+        .donation .total-row .amount-input-wrapper input { font-weight: 700 !important; font-size: 13px !important; }
         .donation .total-row td:first-child { text-align: left !important; padding-left: 8px !important; font-weight: normal !important; }
-        .form-row { margin-bottom: 3px !important; gap: 4px !important; }
+        .form-row { margin-bottom: 0px !important; gap: 4px !important; }
         .donation { margin-top: 3px !important; }
         .receipt-form-area { padding: 3px 3px 0 3px !important; }
-        .payment-dropdown { height: 20px !important; padding: 1px 3px !important; }
+        .payment-dropdown { height: 20px !important; padding: 1px 3px !important; width: 140px !important; margin-left: 5px !important; margin-right: 3px !important; }
       }
     `;
     document.head.appendChild(printCSS);
@@ -867,7 +900,7 @@ const CreateReceipt = () => {
             </div>
             
             <div className="form-row">
-              <label style={{width: '180px'}}>કેશ/ચેક/ઓનલાઈન થી</label>
+              <label style={{width: '200px'}}>કેશ/ચેક/ઓનલાઈન થી</label>
               <select
                 className="payment-dropdown"
                 name="paymentMode"
@@ -888,7 +921,7 @@ const CreateReceipt = () => {
                 onChange={handleInputChange}
                 placeholder=""
                 readOnly={isPreviewMode}
-                style={{marginLeft: '10px'}}
+                style={{marginLeft: '5px', maxWidth: '250px'}}
               />
             </div>
           </div>
@@ -905,40 +938,52 @@ const CreateReceipt = () => {
               <tr>
                 <td className="col-no">1</td>
                 <td className="col-desc">
-                  <input
-                    type="text"
-                    name="donation1PurposeNumber"
-                    value={receiptData.donation1PurposeNumber}
-                    onChange={handleInputChange}
-                    placeholder="Number"
-                    readOnly={isPreviewMode}
-                    style={{width: '60px', marginRight: '5px'}}
-                  />
-                  <span style={{marginRight: '5px'}}>th</span>
                   <select
                     name="donation1PurposeType"
                     value={receiptData.donation1PurposeType}
                     onChange={handleInputChange}
                     disabled={isPreviewMode}
-                    style={{width: 'auto', minWidth: '150px'}}
+                    style={{width: 'auto', minWidth: '150px', marginRight: '5px'}}
                   >
-                    <option value="">Select Purpose</option>
-                    <option value="Anya Dan">Anya Dan</option>
-                    <option value="Bhada Pete Dan">Bhada Pete Dan</option>
-                    <option value="Bhojan Dan">Bhojan Dan</option>
-                    <option value="Cha-Pani Kharch Dan">Cha-Pani Kharch Dan</option>
-                    <option value="Dan Bhet">Dan Bhet</option>
-                    <option value="Fulhar Karch Dan">Fulhar Karch Dan</option>
-                    <option value="Kankotri Dan">Kankotri Dan</option>
-                    <option value="Kanya Dan">Kanya Dan</option>
-                    <option value="Mandap Dan">Mandap Dan</option>
-                    <option value="Mineral Water Dan">Mineral Water Dan</option>
-                    <option value="Pujapa Kharch Dan">Pujapa Kharch Dan</option>
-                    <option value="Purant Dan Pete">Purant Dan Pete</option>
-                    <option value="Sampurn Kharch Dan">Sampurn Kharch Dan</option>
-                    <option value="Servani Kharch Dan">Servani Kharch Dan</option>
-                    <option value="Stage Chori Kharch Dan">Stage Chori Kharch Dan</option>
+                    <option value="">પસંદ કરો</option>
+                    <option value="અન્ય દાન">અન્ય દાન</option>
+                    <option value="ભાડા પેટે દાન">ભાડા પેટે દાન</option>
+                    <option value="ભોજન ખર્ચ દાન">ભોજન ખર્ચ દાન</option>
+                    <option value="ચા-પાણી ખર્ચ દાન">ચા-પાણી ખર્ચ દાન</option>
+                    <option value="દાન ભેટ">દાન ભેટ</option>
+                    <option value="ફુલહાર ખર્ચ દાન">ફુલહાર ખર્ચ દાન</option>
+                    <option value="કંકોત્રી દાન">કંકોત્રી દાન</option>
+                    <option value="કન્યાદાન">કન્યાદાન</option>
+                    <option value="મંડપ ખર્ચ દાન">મંડપ ખર્ચ દાન</option>
+                    <option value="મિનરલ પાણી ખર્ચ દાન">મિનરલ પાણી ખર્ચ દાન</option>
+                    <option value="પૂજાપો ખર્ચ દાન">પૂજાપો ખર્ચ દાન</option>
+                    <option value="સંપૂર્ણ ખર્ચ દાન">સંપૂર્ણ ખર્ચ દાન</option>
+                    <option value="શેરવાની ખર્ચ દાન">શેરવાની ખર્ચ દાન</option>
+                    <option value="સ્ટેજ - ચૉરી ખર્ચ દાન">સ્ટેજ - ચૉરી ખર્ચ દાન</option>
+                    <option value="પૂરાંંત પેટે દાન">પૂરાંંત પેટે દાન</option>
                   </select>
+                  <span style={{marginRight: '5px', marginLeft: '5px'}}>-</span>
+                  <select
+                    name="donation1PurposeNumber"
+                    value={receiptData.donation1PurposeNumber}
+                    onChange={handleInputChange}
+                    disabled={isPreviewMode}
+                    style={{width: '60px', marginRight: '5px'}}
+                  >
+                    <option value="">-</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
+                    <option value="32">32</option>
+                    <option value="33">33</option>
+                    <option value="34">34</option>
+                    <option value="35">35</option>
+                    <option value="36">36</option>
+                    <option value="37">37</option>
+                    <option value="38">38</option>
+                    <option value="39">39</option>
+                    <option value="40">40</option>
+                  </select>
+                  <span style={{marginRight: '5px'}}>મો લગ્ન</span>
                 </td>
                 <td className="col-amt">
                   <div className="amount-input-wrapper">
@@ -1125,7 +1170,7 @@ const CreateReceipt = () => {
             </div>
             
             <div className="form-row">
-              <label style={{width: '180px'}}>કેશ/ચેક/ઓનલાઈન થી</label>
+              <label style={{width: '200px'}}>કેશ/ચેક/ઓનલાઈન થી</label>
               <select
                 className="payment-dropdown"
                 name="paymentMode"
@@ -1146,7 +1191,7 @@ const CreateReceipt = () => {
                 onChange={handleInputChange}
                 placeholder=""
                 readOnly={isPreviewMode}
-                style={{marginLeft: '10px'}}
+                style={{marginLeft: '5px', maxWidth: '250px'}}
               />
             </div>
           </div>
@@ -1163,40 +1208,52 @@ const CreateReceipt = () => {
               <tr>
                 <td className="col-no">1</td>
                 <td className="col-desc">
-                  <input
-                    type="text"
-                    name="donation1PurposeNumber"
-                    value={receiptData.donation1PurposeNumber}
-                    onChange={handleInputChange}
-                    placeholder="Number"
-                    readOnly={isPreviewMode}
-                    style={{width: '60px', marginRight: '5px'}}
-                  />
-                  <span style={{marginRight: '5px'}}>th</span>
                   <select
                     name="donation1PurposeType"
                     value={receiptData.donation1PurposeType}
                     onChange={handleInputChange}
                     disabled={isPreviewMode}
-                    style={{width: 'auto', minWidth: '150px'}}
+                    style={{width: 'auto', minWidth: '150px', marginRight: '5px'}}
                   >
-                    <option value="">Select Purpose</option>
-                    <option value="Anya Dan">Anya Dan</option>
-                    <option value="Bhada Pete Dan">Bhada Pete Dan</option>
-                    <option value="Bhojan Dan">Bhojan Dan</option>
-                    <option value="Cha-Pani Kharch Dan">Cha-Pani Kharch Dan</option>
-                    <option value="Dan Bhet">Dan Bhet</option>
-                    <option value="Fulhar Karch Dan">Fulhar Karch Dan</option>
-                    <option value="Kankotri Dan">Kankotri Dan</option>
-                    <option value="Kanya Dan">Kanya Dan</option>
-                    <option value="Mandap Dan">Mandap Dan</option>
-                    <option value="Mineral Water Dan">Mineral Water Dan</option>
-                    <option value="Pujapa Kharch Dan">Pujapa Kharch Dan</option>
-                    <option value="Purant Dan Pete">Purant Dan Pete</option>
-                    <option value="Sampurn Kharch Dan">Sampurn Kharch Dan</option>
-                    <option value="Servani Kharch Dan">Servani Kharch Dan</option>
-                    <option value="Stage Chori Kharch Dan">Stage Chori Kharch Dan</option>
+                    <option value="">પસંદ કરો</option>
+                    <option value="અન્ય દાન">અન્ય દાન</option>
+                    <option value="ભાડા પેટે દાન">ભાડા પેટે દાન</option>
+                    <option value="ભોજન ખર્ચ દાન">ભોજન ખર્ચ દાન</option>
+                    <option value="ચા-પાણી ખર્ચ દાન">ચા-પાણી ખર્ચ દાન</option>
+                    <option value="દાન ભેટ">દાન ભેટ</option>
+                    <option value="ફુલહાર ખર્ચ દાન">ફુલહાર ખર્ચ દાન</option>
+                    <option value="કંકોત્રી દાન">કંકોત્રી દાન</option>
+                    <option value="કન્યાદાન">કન્યાદાન</option>
+                    <option value="મંડપ ખર્ચ દાન">મંડપ ખર્ચ દાન</option>
+                    <option value="મિનરલ પાણી ખર્ચ દાન">મિનરલ પાણી ખર્ચ દાન</option>
+                    <option value="પૂજાપો ખર્ચ દાન">પૂજાપો ખર્ચ દાન</option>
+                    <option value="સંપૂર્ણ ખર્ચ દાન">સંપૂર્ણ ખર્ચ દાન</option>
+                    <option value="શેરવાની ખર્ચ દાન">શેરવાની ખર્ચ દાન</option>
+                    <option value="સ્ટેજ - ચૉરી ખર્ચ દાન">સ્ટેજ - ચૉરી ખર્ચ દાન</option>
+                    <option value="પૂરાંંત પેટે દાન">પૂરાંંત પેટે દાન</option>
                   </select>
+                  <span style={{marginRight: '5px', marginLeft: '5px'}}>-</span>
+                  <select
+                    name="donation1PurposeNumber"
+                    value={receiptData.donation1PurposeNumber}
+                    onChange={handleInputChange}
+                    disabled={isPreviewMode}
+                    style={{width: '60px', marginRight: '5px'}}
+                  >
+                    <option value="">-</option>
+                    <option value="30">30</option>
+                    <option value="31">31</option>
+                    <option value="32">32</option>
+                    <option value="33">33</option>
+                    <option value="34">34</option>
+                    <option value="35">35</option>
+                    <option value="36">36</option>
+                    <option value="37">37</option>
+                    <option value="38">38</option>
+                    <option value="39">39</option>
+                    <option value="40">40</option>
+                  </select>
+                  <span style={{marginRight: '5px'}}>મો લગ્ન</span>
                 </td>
                 <td className="col-amt">
                   <div className="amount-input-wrapper">

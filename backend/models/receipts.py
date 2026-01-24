@@ -15,7 +15,7 @@ class Receipt(Base):
     # Primary key - PostgreSQL SERIAL
     id = Column(Integer, primary_key=True, index=True)
     
-    # Receipt identification (format: RC1/2025/1234)
+    # Receipt identification (format: A-1234)
     receipt_no = Column(String(50), unique=True, nullable=False, index=True)
     receipt_date = Column(DateTime, nullable=False, index=True)
     

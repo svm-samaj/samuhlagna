@@ -908,13 +908,18 @@ const Reports = () => {
       const totalDonation2 = allReceipts.reduce((sum, receipt) => sum + (receipt.donation2_amount || 0), 0);
       const grandTotal = allReceipts.reduce((sum, receipt) => sum + (receipt.total_amount || 0), 0);
 
+      // Format current date as dd-mm-yyyy
+      const now = new Date();
+      const currentDate = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
+      const currentTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+
       // Create HTML content for PDF with original format
       const htmlContent = `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="utf-8">
-          <title>Receipt Reports - ${new Date().toLocaleDateString()}</title>
+          <title>Receipt Reports - ${currentDate}</title>
           <style>
             body { 
               font-family: Arial, sans-serif; 
@@ -990,7 +995,7 @@ const Reports = () => {
         <body>
           <div class="header">
             <h1>📊 Receipt Reports${hasFilters ? ' (Filtered)' : ''}</h1>
-            <p>Generated on ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+            <p>Generated on ${currentDate} at ${currentTime}</p>
             <p>${hasFilters ? 'Filtered' : 'Total'} Records: ${allReceipts.length} | Total Amount: ${formatCurrency(grandTotal)}</p>
             ${hasFilters ? '<p style="font-size: 10px; color: #666;">Note: This report shows filtered data only</p>' : ''}
           </div>
@@ -1246,11 +1251,10 @@ const Reports = () => {
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-IN', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
   };
 
   const formatCurrency = (amount) => {

@@ -125,7 +125,7 @@ export const AuthProvider = ({ children }) => {
     clearAuth();
     
     // Navigate to login page with correct base path for GitHub Pages
-    window.location.href = '/svmps-frontend/';
+    window.location.href = '/samuhlagna/';
     
     console.log('✅ Auth context: Logout successful');
   };

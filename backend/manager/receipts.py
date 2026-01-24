@@ -25,7 +25,9 @@ from api_request_response.receipts import ReceiptCreate, ReceiptUpdate, ReceiptF
 
 def get_receipt_creator_code(db_session: Session, user_id: int) -> str:
     """
-    Get receipt creator code from user info
+    [DEPRECATED] Get receipt creator code from user info
+    This function is no longer used as receipt numbers now use simple format A-XXXX
+    Kept for backward compatibility.
     
     Args:
         db_session: Database session
@@ -99,15 +101,13 @@ def create_receipt(db_session: Session, receipt_data: ReceiptCreate, user_id: in
         db_session.add(new_receipt)
         db_session.flush()  # This gets the ID without committing
         
-        # Step 3: Generate final receipt number with creator code
-        year = datetime.now().year
-        creator_code = get_receipt_creator_code(db_session, user_id)
+        # Step 3: Generate final receipt number in simple format A-XXXX
         # Subtract 630 from ID for receipt number (e.g., ID 1407 -> 777)
         receipt_sequence = new_receipt.id - 630
         # Ensure sequence is positive (fallback to ID if result would be negative)
         if receipt_sequence <= 0:
             receipt_sequence = new_receipt.id
-        final_receipt_no = f"{creator_code}/{year}/{receipt_sequence:04d}"
+        final_receipt_no = f"A-{receipt_sequence:04d}"
         
         # Step 4: Update the receipt number
         new_receipt.receipt_no = final_receipt_no

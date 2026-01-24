@@ -11,7 +11,7 @@ const NotAuthenticatedPopup = () => {
     navigate('/');
     // Fallback to window.location if navigate doesn't work
     setTimeout(() => {
-      window.location.href = '/svmps-frontend/';
+      window.location.href = '/samuhlagna/';
     }, 100);
   };
 

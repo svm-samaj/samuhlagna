@@ -15,7 +15,7 @@ import models.village_area
 import models.receipts  # Import receipts models for table creation
 
 app = FastAPI(
-    title="SVMPS API",
+    title="Samuhlagna API",
     description="Shree Vishwakarma Mewada Suthar Samaj API",
     version="1.0.0"
 )
@@ -44,7 +44,7 @@ app.include_router(receipts_router)  # Add receipts router
 @app.get("/")
 async def root():
     return {
-        "message": "SVMPS API is running",
+        "message": "Samuhlagna API is running",
         "version": "1.0.0",
         "status": "healthy"
     }

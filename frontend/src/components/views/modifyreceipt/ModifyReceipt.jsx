@@ -273,7 +273,7 @@ const ModifyReceipt = () => {
               className="filter-input combined-search"
               value={filters.donor_or_receipt}
               onChange={(e) => handleFilterChange('donor_or_receipt', e.target.value)}
-              title="Search by donor name (e.g., 'John Doe') or receipt number (e.g., 'RC1/2025/0001')"
+              title="Search by donor name (e.g., 'John Doe') or receipt number (e.g., 'A-0001')"
             />
           </div>
           <div className="filter-group">

@@ -20,7 +20,7 @@ engine = create_engine(
     connect_args={
         "sslmode": "require",
         "connect_timeout": 10,   # Connection timeout in seconds
-        "application_name": "svmps_backend"
+        "application_name": "samuhlagna_backend"
     },
     echo=False                  # Set to True for SQL debugging
 )

@@ -1,4 +1,4 @@
-# SVMPS Frontend - Receipt Management System
+# Samuhlagna - Receipt Management System
 
 A comprehensive receipt management system for Shree Vishwakarma Dhandhar Mewada Suthar Samaj Samuh Lagna Trust, Siddhpur.
 
@@ -14,6 +14,9 @@ This application manages donation receipts, user data, villages, and areas with 
 - 🔐 Role-Based Access Control
 - 📱 Responsive UI
 
+### Git Configuration
+Local repository configured with personal email: `mewadaprashant.u@gmail.com`
+
 ---
 
 ## 📂 Backend Setup
@@ -23,11 +26,22 @@ This application manages donation receipts, user data, villages, and areas with 
 
 ### ⚙️ Environment Setup
 
+**Option 1: Project Root Setup (Recommended for this project)**
+1. **Use the project's virtual environment (already created):**
+   ```bash
+   # Windows PowerShell
+   .\venv\Scripts\activate
+   
+   # Or use quick start
+   .\activate_env.bat
+   ```
+
+**Option 2: Backend Folder Setup**
 1. **Navigate to the backend folder and create a virtual environment:**
    ```bash
 python -m venv env_be
    ```
-Note: The virtual environment (env_be) is excluded via .gitignore.
+Note: Virtual environments (venv, env_be) are excluded via .gitignore.
 
 2. **Activate the virtual environment:**
 
@@ -73,7 +87,7 @@ cd frontend
    ```env
    VITE_NODE_ENV=development
    VITE_DEV_API_URL=http://127.0.0.1:8000
-   VITE_PROD_API_URL=https://svmps-frontend.onrender.com
+   VITE_PROD_API_URL=https://samuhlagna.onrender.com
    ```
 
 3. **Install frontend dependencies:**
@@ -110,7 +124,7 @@ npm run deploy
 |----------|-------------|---------|
 | `VITE_NODE_ENV` | Environment mode | `development` or `production` |
 | `VITE_DEV_API_URL` | Local backend URL | `http://127.0.0.1:8000` |
-| `VITE_PROD_API_URL` | Production backend URL | `https://svmps-frontend.onrender.com` |
+| `VITE_PROD_API_URL` | Production backend URL | `https://samuhlagna.onrender.com` |
 
 ### Developer Tools (Browser Console)
 
@@ -132,7 +146,7 @@ DEV_UTILS.getStatus();         // Check current config
 - ⚠️ **Git Ignored**: `.env` file is not committed to repository
 
 📁 Project Structure
-svmps_frontend/
+samuhlagna/
 │
 ├── backend/
 │   ├── env_be/                # Python virtual environment (excluded from Git)

@@ -30,6 +30,7 @@ dist-ssr
 **/node_modules/**
 **/.DS_STORE
 env_be
+venv
 # test.py
 
 .env

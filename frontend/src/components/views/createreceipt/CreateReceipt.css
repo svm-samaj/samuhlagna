@@ -178,8 +178,9 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  background: var(--header-bg);
-  color: #ffffff;
+  background: #d9d9d9;
+  color: #000000;
+  border: 3px solid #000000;
   padding: 4px 8px;
   box-sizing: border-box;
   margin: 0;
@@ -273,6 +274,7 @@
   font-size: 22px;
   line-height: 1.1;
   letter-spacing: 0.5px;
+  color: #000000;
 }
 
 /* Devotional Line */
@@ -679,8 +681,9 @@
     min-height: 60px !important;
     max-height: 60px !important;
     padding: 4px 8px !important;
-    background: #000 !important;
-    color: #ffffff !important;
+    background: #d9d9d9 !important;
+    color: #000000 !important;
+    border: 3px solid #000000 !important;
     box-sizing: border-box !important;
     margin: 0 !important;
     -webkit-print-color-adjust: exact !important;
@@ -693,7 +696,7 @@
     font-size: 18px !important;
     line-height: 1.1 !important;
     letter-spacing: 0.5px !important;
-    color: #ffffff !important;
+    color: #000000 !important;
     font-weight: 700 !important;
   }
   
@@ -787,7 +790,7 @@
   }
   
   .payment-dropdown {
-    width: 160px !important;
+    width: 140px !important;
     padding: 1px 3px !important;
     height: 20px !important;
     border: none !important;
@@ -797,7 +800,8 @@
     font-size: 12px !important;
     font-weight: 600 !important;
     outline: none !important;
-    margin-right: 5px !important;
+    margin-right: 3px !important;
+    margin-left: 5px !important;
   }
 
   .devotional-line {
@@ -835,14 +839,19 @@
     display: flex !important;
     align-items: center !important;
     gap: 4px !important;
-    margin-bottom: 3px !important;
+    margin-bottom: 0px !important;
   }
 
   .form-row label {
     width: 110px !important;
     font-weight: 700 !important;
-    font-size: 12px !important;
+    font-size: 14px !important;
     white-space: nowrap !important;
+  }
+  
+  /* Specific width for payment mode label to show full text */
+  .form-row:has(.payment-dropdown) label {
+    width: 170px !important;
   }
 
   .form-row .input-line {
@@ -855,6 +864,20 @@
     font-family: inherit !important;
     font-size: 12px !important;
     outline: none !important;
+  }
+  
+  /* Hide all placeholders in print */
+  .form-row .input-line::placeholder,
+  .donation input::placeholder,
+  .donation select::placeholder {
+    color: transparent !important;
+    opacity: 0 !important;
+  }
+  
+  /* Make receipt number bold in print */
+  .receipt-no-readonly {
+    font-weight: 700 !important;
+    font-size: 13px !important;
   }
 
   .donation {
@@ -869,28 +892,37 @@
     padding: 1px 3px !important;
     font-weight: 700 !important;
     text-align: center !important;
-    font-size: 12px !important;
+    font-size: 14px !important;
     height: 18px !important;
     vertical-align: middle !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
+  
+  .donation thead th.col-amt {
+    text-align: center !important;
+  }
 
   .donation tbody td {
     border: 2px solid #000 !important;
-    padding: 1px 4px !important;
+    padding: 0px 3px !important;
     vertical-align: middle !important;
-    height: 12px !important;
-    font-size: 11px !important;
+    height: 10px !important;
+    font-size: 13px !important;
+    line-height: 1 !important;
   }
 
   .donation .total-row td {
     font-weight: 700 !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
     text-align: right !important;
     padding: 1px 4px !important;
     height: 14px !important;
     vertical-align: middle !important;
+  }
+  
+  .donation .total-row td span {
+    font-size: 13px !important;
   }
 
   .footer-sign {
@@ -934,7 +966,7 @@
   }
   
   .receipt-header * {
-    color: #ffffff !important;
+    color: #000000 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
@@ -959,19 +991,19 @@
     max-width: 40px !important;
     text-align: center !important;
     font-weight: 700 !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
   }
 
   .donation .col-desc {
     width: 75% !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
   }
 
   .donation .col-amt {
     width: 18% !important;
     text-align: right !important;
     font-weight: 700 !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
     padding-right: 4px !important;
     box-sizing: border-box !important;
   }
@@ -982,7 +1014,7 @@
     background: transparent !important;
     outline: none !important;
     font-weight: normal !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
     box-sizing: border-box !important;
   }
   
@@ -1030,8 +1062,9 @@
   
   .donation .total-row .amount-input-wrapper input {
     padding-right: 20px !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
     width: auto !important;
+    font-weight: 700 !important;
   }
   
   .donation .total-row .amount-suffix {
@@ -1055,9 +1088,22 @@
     border-bottom: 1px solid #666 !important;
     background: transparent !important;
     font-family: inherit !important;
-    font-size: 11px !important;
+    font-size: 13px !important;
     padding: 1px 2px !important;
     width: 90px !important;
+    text-align: center !important;
+    outline: none !important;
+    display: inline-block !important;
+    vertical-align: baseline !important;
+  }
+  
+  .donation .col-desc select {
+    border: none !important;
+    border-bottom: 1px solid #666 !important;
+    background: transparent !important;
+    font-family: inherit !important;
+    font-size: 13px !important;
+    padding: 1px 2px !important;
     text-align: center !important;
     outline: none !important;
     display: inline-block !important;
@@ -1073,6 +1119,29 @@
 /* Show duplicate receipt when printing */
 @media print {
   .copy-receipt {
+    display: block !important;
+    margin: 8mm auto 0 auto !important;
+    max-width: 200mm !important;
+    width: 200mm !important;
+    box-shadow: none !important;
+    border: 3px solid #000 !important;
+    padding: 5px !important;
+    max-height: 135mm !important;
+  }
+  
+  /* Add "Duplicate receipt" header above copy receipt in print mode */
+  .copy-receipt::before {
+    content: "Duplicate receipt" !important;
+    position: absolute !important;
+    top: -8mm !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    text-align: center !important;
+    font-family: 'Noto Sans Gujarati', 'Noto Sans', Arial, sans-serif !important;
+    width: 100% !important;
     display: block !important;
   }
 }
