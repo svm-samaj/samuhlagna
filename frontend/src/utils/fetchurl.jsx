@@ -206,5 +206,7 @@ export const API_URLS = {
   getAllReceipts: () => `${getBaseUrl()}/receipts/`,
   updateReceipt: (id) => `${getBaseUrl()}/receipts/${id}`,
   deleteReceipt: (id) => `${getBaseUrl()}/receipts/${id}`,
-  getReceiptStats: () => `${getBaseUrl()}/receipts/stats/summary`
+  getReceiptStats: () => `${getBaseUrl()}/receipts/stats/summary`,
+  getDistinctVillages: () => `${getBaseUrl()}/receipts/villages/distinct`,  // Get distinct villages from receipts for dropdown
+  getDistinctDonorsByVillage: (village) => `${getBaseUrl()}/receipts/donors/distinct?village=${encodeURIComponent(village)}`  // Get distinct donors for a specific village
 };

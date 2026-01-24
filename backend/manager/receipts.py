@@ -740,3 +740,70 @@ def generate_receipts_csv_export(db_session: Session, receipts: List[Receipt]):
         media_type="text/csv", 
         headers={"Content-Disposition": "attachment; filename=receipt_report.csv"}
     )
+
+
+def get_distinct_villages(db_session: Session) -> List[str]:
+    """
+    Get distinct villages from receipts table
+    
+    Args:
+        db_session: Database session
+        
+    Returns:
+        List of distinct village names (excluding None/empty)
+    """
+    try:
+        # Query for distinct villages, excluding null and empty values
+        villages = (
+            db_session.query(Receipt.village)
+            .filter(Receipt.village.isnot(None))
+            .filter(Receipt.village != '')
+            .distinct()
+            .order_by(Receipt.village)
+            .all()
+        )
+        
+        # Extract village names from query result tuples
+        village_list = [village[0] for village in villages if village[0]]
+        
+        return village_list
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch distinct villages: {str(e)}"
+        )
+
+def get_distinct_donors_by_village(db: Session, village: str):
+    """
+    Get distinct donor names for a specific village
+    
+    Args:
+        db: Database session
+        village: Village name to filter by
+        
+    Returns:
+        List of distinct donor names for the specified village
+    """
+    try:
+        # Query distinct donor names for the specified village
+        donors = (
+            db.query(Receipt.donor_name)
+            .filter(Receipt.village == village)
+            .filter(Receipt.donor_name.isnot(None))
+            .filter(Receipt.donor_name != '')
+            .distinct()
+            .order_by(Receipt.donor_name)
+            .all()
+        )
+        
+        # Extract donor names from query result tuples
+        donor_list = [donor[0] for donor in donors if donor[0]]
+        
+        return donor_list
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch distinct donors for village: {str(e)}"
+        )

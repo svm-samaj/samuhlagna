@@ -14,7 +14,7 @@
  * If you need to modify shared components, test Create Receipt thoroughly!
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';  // ⚠️ Shared - affects all pages
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import StatusOverlay from '../../common/StatusOverlay';  // ⚠️ Shared - affects all pages
@@ -23,6 +23,7 @@ import OrganizationLogo from '../../../assets/images/organization-logo.bmp';
 import { API_URLS } from '../../../utils/fetchurl';  // ⚠️ Shared - affects all API calls
 import { handleAPIError, formatPermissionMessage } from '../../../utils/errorHandler';  // ⚠️ Shared error handling
 import axios from 'axios';
+import CreatableSelect from 'react-select/creatable';  // For village dropdown with search and create
 import './CreateReceipt.css';  // ⚠️ Component-specific CSS - safe to modify
 
 // Function to convert numbers to English words
@@ -130,6 +131,102 @@ const CreateReceipt = () => {
   
   // State to track the original context - true if came from modify receipt list
   const [cameFromModifyList, setCameFromModifyList] = useState(false);
+  
+  // State for villages dropdown with search and create
+  const [allVillages, setAllVillages] = useState([]); // All villages loaded from API
+  const [villageSearchTerm, setVillageSearchTerm] = useState(''); // Current search term
+
+  // State for donors dropdown with search and create (filtered by village)
+  const [allDonors, setAllDonors] = useState([]); // All donors for selected village
+  const [donorSearchTerm, setDonorSearchTerm] = useState(''); // Current search term for donors
+
+  // Load distinct villages on component mount
+  useEffect(() => {
+    loadDistinctVillages();
+  }, []);
+
+  // Load distinct donors when village changes
+  useEffect(() => {
+    if (receiptData.village && receiptData.village.trim() !== '') {
+      loadDistinctDonorsByVillage(receiptData.village);
+    } else {
+      // Clear donors if no village selected
+      setAllDonors([]);
+    }
+  }, [receiptData.village]);
+
+  const loadDistinctVillages = async () => {
+    try {
+      const response = await axios.get(API_URLS.getDistinctVillages());
+      
+      if (response.data.status === 'success') {
+        setAllVillages(response.data.data);
+        console.log(`✅ Loaded ${response.data.data.length} distinct villages for dropdown`);
+      }
+    } catch (error) {
+      console.error('Error loading villages:', error);
+      // Don't show error to user - graceful fallback to input field
+    }
+  };
+
+  const loadDistinctDonorsByVillage = async (village) => {
+    try {
+      const response = await axios.get(API_URLS.getDistinctDonorsByVillage(village));
+      
+      if (response.data.status === 'success') {
+        setAllDonors(response.data.data);
+        console.log(`✅ Loaded ${response.data.data.length} distinct donors for village: ${village}`);
+      }
+    } catch (error) {
+      console.error(`Error loading donors for village ${village}:`, error);
+      // Don't show error to user - graceful fallback to input field
+      setAllDonors([]);
+    }
+  };
+
+  // Filter villages based on search (show top 10)
+  const filteredVillageOptions = useMemo(() => {
+    if (!villageSearchTerm) {
+      // No search - show first 10 villages
+      return allVillages.slice(0, 10).map(village => ({
+        value: village,
+        label: village
+      }));
+    }
+    
+    // Search in local state
+    const filtered = allVillages.filter(village =>
+      village.toLowerCase().includes(villageSearchTerm.toLowerCase())
+    );
+    
+    // Return top 10 results
+    return filtered.slice(0, 10).map(village => ({
+      value: village,
+      label: village
+    }));
+  }, [allVillages, villageSearchTerm]);
+
+  // Filter donors based on search (show top 10)
+  const filteredDonorOptions = useMemo(() => {
+    if (!donorSearchTerm) {
+      // No search - show first 10 donors
+      return allDonors.slice(0, 10).map(donor => ({
+        value: donor,
+        label: donor
+      }));
+    }
+    
+    // Search in local state
+    const filtered = allDonors.filter(donor =>
+      donor.toLowerCase().includes(donorSearchTerm.toLowerCase())
+    );
+    
+    // Return top 10 results
+    return filtered.slice(0, 10).map(donor => ({
+      value: donor,
+      label: donor
+    }));
+  }, [allDonors, donorSearchTerm]);
 
   // Auto-generate receipt number on component mount OR load existing receipt
   useEffect(() => {
@@ -348,6 +445,58 @@ const CreateReceipt = () => {
         [name]: value
       }));
     }
+  };
+
+  // Handle village selection from dropdown
+  const handleVillageChange = (selectedOption) => {
+    const villageValue = selectedOption ? selectedOption.value.trim().toUpperCase() : '';
+    setReceiptData(prev => ({
+      ...prev,
+      village: villageValue
+    }));
+  };
+
+  // Handle creating new village from dropdown (just adds to local state)
+  const handleCreateVillage = (inputValue) => {
+    // Trim spaces and convert to uppercase
+    const cleanedValue = inputValue.trim().toUpperCase();
+    
+    // Add to local state immediately (no API call needed - will be saved with receipt)
+    setAllVillages([...allVillages, cleanedValue]);
+    
+    // Set as selected value
+    setReceiptData(prev => ({
+      ...prev,
+      village: cleanedValue
+    }));
+    
+    console.log(`✅ Added new village "${cleanedValue}" to local state`);
+  };
+
+  // Handle donor name selection from dropdown
+  const handleDonorChange = (selectedOption) => {
+    const donorValue = selectedOption ? selectedOption.value.trim().toUpperCase() : '';
+    setReceiptData(prev => ({
+      ...prev,
+      name: donorValue
+    }));
+  };
+
+  // Handle creating new donor from dropdown (just adds to local state)
+  const handleCreateDonor = (inputValue) => {
+    // Trim spaces and convert to uppercase
+    const cleanedValue = inputValue.trim().toUpperCase();
+    
+    // Add to local state immediately (no API call needed - will be saved with receipt)
+    setAllDonors([...allDonors, cleanedValue]);
+    
+    // Set as selected value
+    setReceiptData(prev => ({
+      ...prev,
+      name: cleanedValue
+    }));
+    
+    console.log(`✅ Added new donor "${cleanedValue}" to local state`);
   };
 
   const handleSaveReceipt = async () => {
@@ -842,28 +991,139 @@ const CreateReceipt = () => {
             
             <div className="form-row">
               <label>શ્રી/શ્રીમતી :</label>
-              <input
-                className="input-line"
-                type="text"
-                name="name"
-                value={receiptData.name}
-                onChange={handleInputChange}
-                placeholder="Name"
-                readOnly={isPreviewMode}
-              />
+              {isPreviewMode ? (
+                <input
+                  className="input-line"
+                  type="text"
+                  name="name"
+                  value={receiptData.name}
+                  readOnly={true}
+                />
+              ) : (
+                <CreatableSelect
+                  options={filteredDonorOptions}
+                  value={receiptData.name ? { value: receiptData.name, label: receiptData.name } : null}
+                  onChange={handleDonorChange}
+                  onCreateOption={handleCreateDonor}
+                  onInputChange={(value) => setDonorSearchTerm(value)}
+                  isSearchable={true}
+                  isClearable={true}
+                  placeholder="Select or type donor name..."
+                  formatCreateLabel={(inputValue) => `+ Create "${inputValue}"`}
+                  isDisabled={!receiptData.village}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  menuPortalTarget={document.body}
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      minHeight: '24px',
+                      height: '24px',
+                      border: 'none',
+                      borderBottom: '2px solid #000',
+                      borderRadius: 0,
+                      boxShadow: 'none',
+                      '&:hover': {
+                        borderBottom: '2px solid #4CAF50'
+                      }
+                    }),
+                    valueContainer: (base) => ({
+                      ...base,
+                      height: '24px',
+                      padding: '0 6px'
+                    }),
+                    input: (base) => ({
+                      ...base,
+                      margin: 0,
+                      padding: 0
+                    }),
+                    indicatorsContainer: (base) => ({
+                      ...base,
+                      height: '24px'
+                    }),
+                    dropdownIndicator: (base) => ({
+                      ...base,
+                      padding: '0 4px'
+                    }),
+                    clearIndicator: (base) => ({
+                      ...base,
+                      padding: '0 4px'
+                    }),
+                    menuPortal: (base) => ({
+                      ...base,
+                      zIndex: 10000
+                    })
+                  }}
+                />
+              )}
             </div>
             
             <div className="form-row">
               <label>મૂળ વતન :</label>
-              <input
-                className="input-line"
-                type="text"
-                name="village"
-                value={receiptData.village}
-                onChange={handleInputChange}
-                placeholder="Village"
-                readOnly={isPreviewMode}
-              />
+              {isPreviewMode ? (
+                <input
+                  className="input-line"
+                  type="text"
+                  name="village"
+                  value={receiptData.village}
+                  readOnly={true}
+                />
+              ) : (
+                <CreatableSelect
+                  options={filteredVillageOptions}
+                  value={receiptData.village ? { value: receiptData.village, label: receiptData.village } : null}
+                  onChange={handleVillageChange}
+                  onCreateOption={handleCreateVillage}
+                  onInputChange={(value) => setVillageSearchTerm(value)}
+                  isSearchable={true}
+                  isClearable={true}
+                  placeholder="Select or type village..."
+                  formatCreateLabel={(inputValue) => `+ Create "${inputValue}"`}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  menuPortalTarget={document.body}
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      minHeight: '24px',
+                      height: '24px',
+                      border: 'none',
+                      borderBottom: '2px solid #000',
+                      borderRadius: 0,
+                      boxShadow: 'none',
+                      '&:hover': {
+                        borderBottom: '2px solid #4CAF50'
+                      }
+                    }),
+                    valueContainer: (base) => ({
+                      ...base,
+                      height: '24px',
+                      padding: '0 6px'
+                    }),
+                    input: (base) => ({
+                      ...base,
+                      margin: 0,
+                      padding: 0
+                    }),
+                    indicatorsContainer: (base) => ({
+                      ...base,
+                      height: '24px'
+                    }),
+                    dropdownIndicator: (base) => ({
+                      ...base,
+                      padding: '0 4px'
+                    }),
+                    clearIndicator: (base) => ({
+                      ...base,
+                      padding: '0 4px'
+                    }),
+                    menuPortal: (base) => ({
+                      ...base,
+                      zIndex: 9999
+                    })
+                  }}
+                />
+              )}
               <label style={{width: '90px'}}>રહેઠાણ :</label>
               <input
                 className="input-line"
@@ -1112,28 +1372,139 @@ const CreateReceipt = () => {
             
             <div className="form-row">
               <label>શ્રી/શ્રીમતી :</label>
-              <input
-                className="input-line"
-                type="text"
-                name="name"
-                value={receiptData.name}
-                onChange={handleInputChange}
-                placeholder="Name"
-                readOnly={isPreviewMode}
-              />
+              {isPreviewMode ? (
+                <input
+                  className="input-line"
+                  type="text"
+                  name="name"
+                  value={receiptData.name}
+                  readOnly={true}
+                />
+              ) : (
+                <CreatableSelect
+                  options={filteredDonorOptions}
+                  value={receiptData.name ? { value: receiptData.name, label: receiptData.name } : null}
+                  onChange={handleDonorChange}
+                  onCreateOption={handleCreateDonor}
+                  onInputChange={(value) => setDonorSearchTerm(value)}
+                  isSearchable={true}
+                  isClearable={true}
+                  placeholder="Select or type donor name..."
+                  formatCreateLabel={(inputValue) => `+ Create "${inputValue}"`}
+                  isDisabled={!receiptData.village}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  menuPortalTarget={document.body}
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      minHeight: '24px',
+                      height: '24px',
+                      border: 'none',
+                      borderBottom: '2px solid #000',
+                      borderRadius: 0,
+                      boxShadow: 'none',
+                      '&:hover': {
+                        borderBottom: '2px solid #4CAF50'
+                      }
+                    }),
+                    valueContainer: (base) => ({
+                      ...base,
+                      height: '24px',
+                      padding: '0 6px'
+                    }),
+                    input: (base) => ({
+                      ...base,
+                      margin: 0,
+                      padding: 0
+                    }),
+                    indicatorsContainer: (base) => ({
+                      ...base,
+                      height: '24px'
+                    }),
+                    dropdownIndicator: (base) => ({
+                      ...base,
+                      padding: '0 4px'
+                    }),
+                    clearIndicator: (base) => ({
+                      ...base,
+                      padding: '0 4px'
+                    }),
+                    menuPortal: (base) => ({
+                      ...base,
+                      zIndex: 10000
+                    })
+                  }}
+                />
+              )}
             </div>
             
             <div className="form-row">
               <label>મૂળ વતન :</label>
-              <input
-                className="input-line"
-                type="text"
-                name="village"
-                value={receiptData.village}
-                onChange={handleInputChange}
-                placeholder="Village"
-                readOnly={isPreviewMode}
-              />
+              {isPreviewMode ? (
+                <input
+                  className="input-line"
+                  type="text"
+                  name="village"
+                  value={receiptData.village}
+                  readOnly={true}
+                />
+              ) : (
+                <CreatableSelect
+                  options={filteredVillageOptions}
+                  value={receiptData.village ? { value: receiptData.village, label: receiptData.village } : null}
+                  onChange={handleVillageChange}
+                  onCreateOption={handleCreateVillage}
+                  onInputChange={(value) => setVillageSearchTerm(value)}
+                  isSearchable={true}
+                  isClearable={true}
+                  placeholder="Select or type village..."
+                  formatCreateLabel={(inputValue) => `+ Create "${inputValue}"`}
+                  className="react-select-container"
+                  classNamePrefix="react-select"
+                  menuPortalTarget={document.body}
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      minHeight: '24px',
+                      height: '24px',
+                      border: 'none',
+                      borderBottom: '2px solid #000',
+                      borderRadius: 0,
+                      boxShadow: 'none',
+                      '&:hover': {
+                        borderBottom: '2px solid #4CAF50'
+                      }
+                    }),
+                    valueContainer: (base) => ({
+                      ...base,
+                      height: '24px',
+                      padding: '0 6px'
+                    }),
+                    input: (base) => ({
+                      ...base,
+                      margin: 0,
+                      padding: 0
+                    }),
+                    indicatorsContainer: (base) => ({
+                      ...base,
+                      height: '24px'
+                    }),
+                    dropdownIndicator: (base) => ({
+                      ...base,
+                      padding: '0 4px'
+                    }),
+                    clearIndicator: (base) => ({
+                      ...base,
+                      padding: '0 4px'
+                    }),
+                    menuPortal: (base) => ({
+                      ...base,
+                      zIndex: 9999
+                    })
+                  }}
+                />
+              )}
               <label style={{width: '90px'}}>રહેઠાણ :</label>
               <input
                 className="input-line"

@@ -449,3 +449,71 @@ def get_receipt_reports_dropdown_controller(db_session: Session, user_id: int, u
             "message": "Failed to load dropdown data",
             "data": []
         }
+
+
+def get_distinct_villages_controller(db_session: Session):
+    """
+    Controller to get distinct villages from receipts table
+    
+    Args:
+        db_session: Database session
+        
+    Returns:
+        Response dictionary with list of distinct villages
+    """
+    try:
+        # Get distinct villages from manager
+        villages = receipts_manager.get_distinct_villages(db_session)
+        
+        response = {
+            "status": "success",
+            "data": villages,
+            "message": f"Retrieved {len(villages)} distinct villages"
+        }
+        
+        return response
+        
+    except Exception as e:
+        print(f"ERROR: Controller - Failed to get distinct villages: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "status": "error",
+            "message": "Failed to load villages",
+            "data": []
+        }
+
+def get_distinct_donors_by_village_controller(village: str, db: Session):
+    """
+    Controller to get distinct donor names for a specific village
+    
+    Args:
+        village: Village name to filter by
+        db: Database session
+        
+    Returns:
+        Response with list of distinct donor names
+    """
+    try:
+        print(f"INFO: Controller - Getting distinct donors for village: {village}")
+        
+        # Get distinct donors for the village from manager
+        donors = receipts_manager.get_distinct_donors_by_village(db, village)
+        
+        response = {
+            "status": "success",
+            "data": donors,
+            "message": f"Retrieved {len(donors)} distinct donors for village: {village}"
+        }
+        
+        return response
+        
+    except Exception as e:
+        print(f"ERROR: Controller - Failed to get distinct donors for village: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return {
+            "status": "error",
+            "message": "Failed to load donors",
+            "data": []
+        }

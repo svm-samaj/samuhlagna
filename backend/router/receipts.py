@@ -429,6 +429,58 @@ async def get_receipt_reports_dropdown(
         }
 
 
+@router.get("/villages/distinct", status_code=status.HTTP_200_OK)
+async def get_distinct_villages(
+    db: db_dependency,
+    current_user: user_dependency,
+):
+    """
+    Get distinct villages from receipts table
+    
+    **Permissions**: All authenticated users can access
+    **Returns**: List of unique village names from receipts
+    **Usage**: For dropdown/autocomplete in receipt creation form
+    """
+    try:
+        response = receipts_controller.get_distinct_villages_controller(db)
+        return response
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Failed to load distinct villages: {str(e)}",
+            "data": []
+        }
+
+
+@router.get("/donors/distinct", status_code=status.HTTP_200_OK)
+async def get_distinct_donors_by_village(
+    village: str,
+    db: db_dependency,
+    current_user: user_dependency,
+):
+    """
+    Get distinct donor names for a specific village
+    
+    **Permissions**: All authenticated users can access
+    **Query Parameters**: 
+        - village (required): Village name to filter by
+    **Returns**: List of unique donor names for the specified village
+    **Usage**: For dropdown/autocomplete in receipt creation form
+    **Example**: /receipts/donors/distinct?village=AHMEDABAD
+    """
+    try:
+        response = receipts_controller.get_distinct_donors_by_village_controller(village, db)
+        return response
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Failed to load distinct donors for village: {str(e)}",
+            "data": []
+        }
+
+
 @router.get("/debug/user-permissions", status_code=status.HTTP_200_OK)
 async def debug_user_permissions(
     db: db_dependency,
