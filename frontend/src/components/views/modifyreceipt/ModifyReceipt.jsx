@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { API_URLS } from '../../../utils/fetchurl';
 import StatusOverlay from '../../common/StatusOverlay';
 import { handleAPIError, formatPermissionMessage } from '../../../utils/errorHandler';
 import axios from 'axios';
+import Select from 'react-select';
 import './ModifyReceipt.css';
 
 const ModifyReceipt = () => {
@@ -24,10 +25,15 @@ const ModifyReceipt = () => {
   const [filters, setFilters] = useState({
     receipt_date: '',
     donor_or_receipt: '',  // Combined donor name and receipt number search
-    village_or_residence: '', // Combined village and residence search
+    village: '', // Village search (will use dropdown)
+    receipt_no: '', // Receipt number search
     payment_mode: '',
     status: ''
   });
+
+  // State for villages dropdown with search
+  const [allVillages, setAllVillages] = useState([]); // All villages loaded from API
+  const [villageSearchTerm, setVillageSearchTerm] = useState(''); // Current search term
 
 
   // Overlay state for messages
@@ -39,10 +45,51 @@ const ModifyReceipt = () => {
     pendingAction: null
   });
 
-  // Load receipts on component mount and when filters change
+  // Load distinct villages on component mount
+  useEffect(() => {
+    loadDistinctVillages();
+  }, []);
+
+  const loadDistinctVillages = async () => {
+    try {
+      const response = await axios.get(API_URLS.getDistinctVillages());
+      
+      if (response.data.status === 'success') {
+        setAllVillages(response.data.data);
+        console.log(`✅ Loaded ${response.data.data.length} distinct villages for dropdown`);
+      }
+    } catch (error) {
+      console.error('Error loading villages:', error);
+      // Don't show error to user - graceful fallback to input field
+    }
+  };
+
+  // Filter villages based on search (show top 10)
+  const filteredVillageOptions = useMemo(() => {
+    if (!villageSearchTerm) {
+      // No search - show first 10 villages
+      return allVillages.slice(0, 10).map(village => ({
+        value: village,
+        label: village
+      }));
+    }
+    
+    // Search in local state
+    const filtered = allVillages.filter(village =>
+      village.toLowerCase().includes(villageSearchTerm.toLowerCase())
+    );
+    
+    // Return top 10 results
+    return filtered.slice(0, 10).map(village => ({
+      value: village,
+      label: village
+    }));
+  }, [allVillages, villageSearchTerm]);
+
+  // Load receipts on component mount and when page changes (NOT when filters change)
   useEffect(() => {
     loadReceipts();
-  }, [currentPage, filters]);
+  }, [currentPage]);
 
   // Load receipts from API
   const loadReceipts = async () => {
@@ -64,10 +111,14 @@ const ModifyReceipt = () => {
         // Note: Receipt number search will be handled on backend
       }
       
-      // Handle combined village/residence search
-      if (filters.village_or_residence) {
-        apiFilters.village = filters.village_or_residence;
-        // Note: Residence search will be handled on backend
+      // Handle village search
+      if (filters.village) {
+        apiFilters.village = filters.village;
+      }
+      
+      // Handle receipt number search
+      if (filters.receipt_no) {
+        apiFilters.receipt_no = filters.receipt_no;
       }
       
       // Handle other filters
@@ -145,13 +196,13 @@ const ModifyReceipt = () => {
     }
   };
 
-  // Handle filter changes
+  // Handle filter changes (no longer auto-triggers search)
   const handleFilterChange = (name, value) => {
     setFilters(prev => ({
       ...prev,
       [name]: value
     }));
-    setCurrentPage(1); // Reset to first page when filtering
+    // Note: Page reset happens in handleSearch, not here
   };
 
   // Clear all filters
@@ -159,12 +210,20 @@ const ModifyReceipt = () => {
     setFilters({
       receipt_date: '',
       donor_or_receipt: '',
-      village_or_residence: '',
+      village: '',
+      receipt_no: '',
       payment_mode: '',
       status: ''
     });
     setSearchTerm('');
+    setVillageSearchTerm('');
     setCurrentPage(1);
+  };
+
+  // Handle search button click
+  const handleSearch = () => {
+    setCurrentPage(1); // Reset to first page
+    loadReceipts();
   };
 
   // Handle edit receipt - navigate to CreateReceipt with receipt ID
@@ -277,18 +336,103 @@ const ModifyReceipt = () => {
             />
           </div>
           <div className="filter-group">
-            <label className="filter-label">Village / Residence:</label>
-            <input
-              type="text"
-              placeholder="Search by village or residence..."
-              className="filter-input combined-search"
-              value={filters.village_or_residence}
-              onChange={(e) => handleFilterChange('village_or_residence', e.target.value)}
-              title="Search by village or residence address"
-            />
+            <label className="filter-label">Village:</label>
+            <div className="filter-select-wrapper">
+              <Select
+                options={filteredVillageOptions}
+                value={filters.village ? { value: filters.village, label: filters.village } : null}
+                onChange={(selected) => handleFilterChange('village', selected ? selected.value : '')}
+                onInputChange={(value) => setVillageSearchTerm(value)}
+                isSearchable={true}
+                isClearable={true}
+                placeholder="Select village..."
+                menuPortalTarget={document.body}
+                classNamePrefix="react-select"
+                styles={{
+                  control: (base) => ({
+                    ...base,
+                    minHeight: '38px',
+                    height: '38px',
+                    border: '1px solid #d1d5db',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                    boxShadow: 'none',
+                    '&:hover': {
+                      borderColor: '#d1d5db'
+                    }
+                  }),
+                  valueContainer: (base) => ({
+                    ...base,
+                    padding: '0 0.75rem',
+                    height: '38px',
+                    display: 'flex',
+                    alignItems: 'center'
+                  }),
+                  singleValue: (base) => ({
+                    ...base,
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
+                    maxWidth: 'calc(100% - 8px)',
+                    fontSize: '0.9rem',
+                    lineHeight: '1',
+                    margin: 0,
+                    top: '50%',
+                    transform: 'translateY(-50%)'
+                  }),
+                  input: (base) => ({
+                    ...base,
+                    margin: 0,
+                    padding: 0,
+                    fontSize: '0.9rem'
+                  }),
+                  placeholder: (base) => ({
+                    ...base,
+                    color: '#a0aec0',
+                    fontSize: '0.95rem',
+                    lineHeight: '1',
+                    margin: 0
+                  }),
+                  indicatorsContainer: (base) => ({
+                    ...base,
+                    height: '38px'
+                  }),
+                  indicatorSeparator: () => ({
+                    display: 'none'
+                  }),
+                  dropdownIndicator: (base) => ({
+                    ...base,
+                    padding: '8px'
+                  }),
+                  clearIndicator: (base) => ({
+                    ...base,
+                    padding: '8px'
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    zIndex: 9999
+                  }),
+                  menuPortal: (base) => ({
+                    ...base,
+                    zIndex: 9999
+                  })
+                }}
+              />
+            </div>
           </div>
         </div>
         <div className="filters-row">
+          <div className="filter-group">
+            <label className="filter-label">Receipt No:</label>
+            <input
+              type="text"
+              placeholder="Search by receipt number (e.g., A-0001)..."
+              className="filter-input"
+              value={filters.receipt_no}
+              onChange={(e) => handleFilterChange('receipt_no', e.target.value)}
+              title="Search by receipt number"
+            />
+          </div>
           <div className="filter-group">
             <label className="filter-label">Payment Mode:</label>
             <select
@@ -315,11 +459,11 @@ const ModifyReceipt = () => {
             </select>
           </div>
           <div className="filter-group filter-buttons">
+            <button onClick={handleSearch} className="btn btn-search">
+              🔍 Search
+            </button>
             <button onClick={clearFilters} className="btn btn-clear">
               🗑️ Clear Filters
-            </button>
-            <button onClick={loadReceipts} className="btn btn-refresh">
-              🔄 Refresh
             </button>
           </div>
         </div>

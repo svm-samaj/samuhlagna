@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import qs from "qs";
-import AsyncSelect from "react-select/async";
+import Select from "react-select";
 import { API_URLS } from "../../../utils/fetchurl";
 import { useBigDataApiCall, useRegularApiCall } from "../../../hooks/useApiCall";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -36,10 +36,106 @@ const ShowUser = () => {
     pendingAction: null // for delete confirmations
   });
 
+  // State for areas and villages dropdown with search
+  const [allAreas, setAllAreas] = useState([]); // All areas loaded from API
+  const [allVillages, setAllVillages] = useState([]); // All villages loaded from API
+  const [areaSearchTerm, setAreaSearchTerm] = useState(''); // Search term for filter areas
+  const [villageSearchTerm, setVillageSearchTerm] = useState(''); // Search term for filter villages
+  const [editAreaSearchTerm, setEditAreaSearchTerm] = useState(''); // Search term for edit area
+  const [editVillageSearchTerm, setEditVillageSearchTerm] = useState(''); // Search term for edit village
+
   // API call hooks
   const { loading: usersLoading, error: usersError, execute: executeUsersCall, reset: resetUsersCall } = useBigDataApiCall();
   const { loading: actionLoading, error: actionError, execute: executeActionCall, reset: resetActionCall } = useRegularApiCall();
   const { isAuthenticated, logout } = useAuth(); // Add auth context
+
+  // Load areas and villages once on component mount
+  useEffect(() => {
+    loadAllAreas();
+    loadAllVillages();
+  }, []);
+
+  const loadAllAreas = async () => {
+    try {
+      const res = await axios.get(API_URLS.getAllAreas(), {
+        params: { page_size: -1 } // Fetch all records at once
+      });
+      if (res.data && res.data.data) {
+        const areas = res.data.data.map((area) => ({
+          label: area.area,
+          value: area.area_id,
+        }));
+        setAllAreas(areas);
+        console.log(`✅ Loaded ${areas.length} areas for dropdown (all records)`);
+      }
+    } catch (err) {
+      console.error("Error loading areas:", err);
+      setAllAreas([]);
+    }
+  };
+
+  const loadAllVillages = async () => {
+    try {
+      const res = await axios.get(API_URLS.getAllVillages(), {
+        params: { page_size: -1 } // Fetch all records at once
+      });
+      if (res.data && res.data.data) {
+        const villages = res.data.data.map((village) => ({
+          label: village.village,
+          value: village.village_id,
+        }));
+        setAllVillages(villages);
+        console.log(`✅ Loaded ${villages.length} villages for dropdown (all records)`);
+      }
+    } catch (err) {
+      console.error("Error loading villages:", err);
+      setAllVillages([]);
+    }
+  };
+
+  // Filter areas for filter dropdown (show top 10)
+  const filteredAreaOptions = useMemo(() => {
+    if (!areaSearchTerm) {
+      return allAreas.slice(0, 10);
+    }
+    const filtered = allAreas.filter(area =>
+      area.label.toLowerCase().includes(areaSearchTerm.toLowerCase())
+    );
+    return filtered.slice(0, 10);
+  }, [allAreas, areaSearchTerm]);
+
+  // Filter villages for filter dropdown (show top 10)
+  const filteredVillageOptions = useMemo(() => {
+    if (!villageSearchTerm) {
+      return allVillages.slice(0, 10);
+    }
+    const filtered = allVillages.filter(village =>
+      village.label.toLowerCase().includes(villageSearchTerm.toLowerCase())
+    );
+    return filtered.slice(0, 10);
+  }, [allVillages, villageSearchTerm]);
+
+  // Filter areas for edit dropdown (show top 10)
+  const filteredEditAreaOptions = useMemo(() => {
+    if (!editAreaSearchTerm) {
+      return allAreas.slice(0, 10);
+    }
+    const filtered = allAreas.filter(area =>
+      area.label.toLowerCase().includes(editAreaSearchTerm.toLowerCase())
+    );
+    return filtered.slice(0, 10);
+  }, [allAreas, editAreaSearchTerm]);
+
+  // Filter villages for edit dropdown (show top 10)
+  const filteredEditVillageOptions = useMemo(() => {
+    if (!editVillageSearchTerm) {
+      return allVillages.slice(0, 10);
+    }
+    const filtered = allVillages.filter(village =>
+      village.label.toLowerCase().includes(editVillageSearchTerm.toLowerCase())
+    );
+    return filtered.slice(0, 10);
+  }, [allVillages, editVillageSearchTerm]);
 
   const fetchUsers = async (pageNum = 1, search = "") => {
     try {
@@ -245,45 +341,44 @@ const ShowUser = () => {
     console.log("Form data:", formData); // Debug log
     setEditForm(formData);
     
-    // Set the selected area and village for AsyncSelect
-    // Since we only have names, we'll need to find the IDs by loading options
+    // Set the selected area and village from loaded state
     setEditSelectedArea(null);
     setEditSelectedVillage(null);
     
-    // Load area ID if area name exists
-    if (user.area) {
-      loadAreaOptions(user.area).then((options) => {
-        console.log("Area options:", options);
-        console.log("Looking for area:", user.area);
-        const matchedArea = options.find(option => option.label === user.area);
-        console.log("Matched area:", matchedArea);
-        if (matchedArea) {
-          setEditSelectedArea(matchedArea);
-          setEditForm(prev => ({
-            ...prev,
-            fk_area_id: matchedArea.value,
-            area: matchedArea.label
-          }));
-        }
-      });
+    // Find area from loaded allAreas state
+    if (user.area && allAreas.length > 0) {
+      const matchedArea = allAreas.find(option => option.label === user.area);
+      console.log("Matched area:", matchedArea);
+      if (matchedArea) {
+        setEditSelectedArea(matchedArea);
+        setEditForm(prev => ({
+          ...prev,
+          fk_area_id: matchedArea.value,
+          area: matchedArea.label
+        }));
+      } else {
+        // If not found, create a temporary option (might be new area)
+        const tempArea = { value: user.fk_area_id || user.area_id || "", label: user.area };
+        setEditSelectedArea(tempArea);
+      }
     }
     
-    // Load village ID if village name exists
-    if (user.village) {
-      loadVillageOptions(user.village).then((options) => {
-        console.log("Village options:", options);
-        console.log("Looking for village:", user.village);
-        const matchedVillage = options.find(option => option.label === user.village);
-        console.log("Matched village:", matchedVillage);
-        if (matchedVillage) {
-          setEditSelectedVillage(matchedVillage);
-          setEditForm(prev => ({
-            ...prev,
-            fk_village_id: matchedVillage.value,
-            village: matchedVillage.label
-          }));
-        }
-      });
+    // Find village from loaded allVillages state
+    if (user.village && allVillages.length > 0) {
+      const matchedVillage = allVillages.find(option => option.label === user.village);
+      console.log("Matched village:", matchedVillage);
+      if (matchedVillage) {
+        setEditSelectedVillage(matchedVillage);
+        setEditForm(prev => ({
+          ...prev,
+          fk_village_id: matchedVillage.value,
+          village: matchedVillage.label
+        }));
+      } else {
+        // If not found, create a temporary option (might be new village)
+        const tempVillage = { value: user.fk_village_id || user.village_id || "", label: user.village };
+        setEditSelectedVillage(tempVillage);
+      }
     }
     
     setShowEditPopup(true);
@@ -483,35 +578,6 @@ const ShowUser = () => {
   };
 
 
-  const loadAreaOptions = async (inputValue) => {
-    try {
-      const res = await axios.get(API_URLS.getAllAreas(), {
-        params: { area: inputValue },
-      });
-      return res.data.data.map((area) => ({
-        label: area.area,
-        value: area.area_id,
-      }));
-    } catch (err) {
-      console.error("❌ Error loading area options", err);
-      return [];
-    }
-  };
-
-  const loadVillageOptions = async (inputValue) => {
-    try {
-      const res = await axios.get(API_URLS.getAllVillages(), {
-        params: { village: inputValue },
-      });
-      return res.data.data.map((village) => ({
-        label: village.village,
-        value: village.village_id,
-      }));
-    } catch (err) {
-      console.error("❌ Error loading village options", err);
-      return [];
-    }
-  };
 
   const totalPages = Math.ceil(totalCount / pageSize);
 
@@ -604,34 +670,40 @@ const ShowUser = () => {
           
           <div className="dropdowns-section">
             <div className="select-wrapper mini">
-              <AsyncSelect
+              <Select
                 isMulti
-                cacheOptions
-                defaultOptions
-                loadOptions={loadAreaOptions}
+                options={filteredAreaOptions}
+                onInputChange={(value) => setAreaSearchTerm(value)}
                 onChange={(selected) => {
                   setSelectedAreas(selected || []);
                 }}
                 value={selectedAreas}
                 placeholder="Area"
+                isSearchable={true}
                 classNamePrefix="react-select-menu"
                 menuPortalTarget={document.body}
+                styles={{
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 })
+                }}
               />
             </div>
             
             <div className="select-wrapper mini">
-              <AsyncSelect
+              <Select
                 isMulti
-                cacheOptions
-                defaultOptions
-                loadOptions={loadVillageOptions}
+                options={filteredVillageOptions}
+                onInputChange={(value) => setVillageSearchTerm(value)}
                 onChange={(selected) => {
                   setSelectedVillages(selected || []);
                 }}
                 value={selectedVillages}
                 placeholder="Village"
+                isSearchable={true}
                 classNamePrefix="react-select-menu"
                 menuPortalTarget={document.body}
+                styles={{
+                  menuPortal: (base) => ({ ...base, zIndex: 9998 })
+                }}
               />
             </div>
           </div>
@@ -828,11 +900,10 @@ const ShowUser = () => {
                 placeholder="Mobile 2" 
               />
 
-              <AsyncSelect
+              <Select
                 classNamePrefix="react-select-menu"
-                cacheOptions
-                defaultOptions
-                loadOptions={loadAreaOptions}
+                options={filteredEditAreaOptions}
+                onInputChange={(value) => setEditAreaSearchTerm(value)}
                 menuPortalTarget={document.body}
                 placeholder="Select Area"
                 onChange={(selected) => {
@@ -845,14 +916,17 @@ const ShowUser = () => {
                 }}
                 value={editSelectedArea}
                 isClearable
-                styles={{ container: (base) => ({ ...base, width: "100%" }) }}
+                isSearchable
+                styles={{ 
+                  container: (base) => ({ ...base, width: "100%" }),
+                  menuPortal: (base) => ({ ...base, zIndex: 10000 })
+                }}
               />
 
-              <AsyncSelect
+              <Select
                 classNamePrefix="react-select-menu"
-                cacheOptions
-                defaultOptions
-                loadOptions={loadVillageOptions}
+                options={filteredEditVillageOptions}
+                onInputChange={(value) => setEditVillageSearchTerm(value)}
                 menuPortalTarget={document.body}
                 placeholder="Select Village"
                 onChange={(selected) => {
@@ -865,7 +939,11 @@ const ShowUser = () => {
                 }}
                 value={editSelectedVillage}
                 isClearable
-                styles={{ container: (base) => ({ ...base, width: "100%" }) }}
+                isSearchable
+                styles={{ 
+                  container: (base) => ({ ...base, width: "100%" }),
+                  menuPortal: (base) => ({ ...base, zIndex: 9999 })
+                }}
               />
 
               <input 

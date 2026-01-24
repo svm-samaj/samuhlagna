@@ -194,6 +194,9 @@ def get_receipts_paginated(
                         Receipt.residence.ilike(f"%{search_term}%")
                     )
                 )
+            if filters.receipt_no:
+                # Specific receipt number search using LIKE
+                query = query.filter(Receipt.receipt_no.ilike(f"%{filters.receipt_no}%"))
             if filters.payment_mode:
                 query = query.filter(Receipt.payment_mode == filters.payment_mode)
             if filters.donation1_purpose:
@@ -566,6 +569,9 @@ def get_receipts_for_export(
             
             if filters.village:
                 query = query.filter(Receipt.village.ilike(f"%{filters.village}%"))
+            
+            if filters.receipt_no:
+                query = query.filter(Receipt.receipt_no.ilike(f"%{filters.receipt_no}%"))
             
             if filters.payment_mode:
                 query = query.filter(Receipt.payment_mode.ilike(f"%{filters.payment_mode}%"))

@@ -39,10 +39,8 @@ def get_villages_with_user_count(
     page_num: int = 1,
     page_size: int = 10
 ):
-    """Get villages with user count and pagination"""
+    """Get villages with user count and pagination. Use page_size=-1 to get all records."""
     try:
-        offset = page_size * (page_num - 1)
-
         # Query with user_data count
         query = db_session.query(
             Village.village_id,
@@ -60,7 +58,12 @@ def get_villages_with_user_count(
         if village_filter:
             query = query.filter(Village.village.ilike(f"%{village_filter}%"))
 
-        result = query.order_by(Village.village).offset(offset).limit(page_size).all()
+        # If page_size is -1, fetch all records without pagination
+        if page_size == -1:
+            result = query.order_by(Village.village).all()
+        else:
+            offset = page_size * (page_num - 1)
+            result = query.order_by(Village.village).offset(offset).limit(page_size).all()
 
         # Get total count with retry logic
         max_retries = 3
@@ -80,7 +83,7 @@ def get_villages_with_user_count(
                     time.sleep(0.1 * (attempt + 1))
                     continue
                 else:
-                    total_count = len(result) if len(result) < page_size else (page_num * page_size)
+                    total_count = len(result)
 
         return {
             "message": "Villages fetched successfully.",
@@ -140,10 +143,8 @@ def get_areas_with_user_count(
     page_num: int = 1,
     page_size: int = 10
 ):
-    """Get areas with user count and pagination"""
+    """Get areas with user count and pagination. Use page_size=-1 to get all records."""
     try:
-        offset = page_size * (page_num - 1)
-
         # Query with user_data count
         query = db_session.query(
             Area.area_id,
@@ -162,7 +163,13 @@ def get_areas_with_user_count(
             query = query.filter(Area.area.ilike(f"%{area_filter}%"))
 
         total_count = db_session.query(Area).count()
-        result = query.order_by(Area.area).offset(offset).limit(page_size).all()
+        
+        # If page_size is -1, fetch all records without pagination
+        if page_size == -1:
+            result = query.order_by(Area.area).all()
+        else:
+            offset = page_size * (page_num - 1)
+            result = query.order_by(Area.area).offset(offset).limit(page_size).all()
 
         return {
             "message": "Areas fetched successfully.",

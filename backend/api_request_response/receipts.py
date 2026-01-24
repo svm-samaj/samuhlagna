@@ -126,6 +126,7 @@ class ReceiptFilter(BaseModel):
     """Query parameters for filtering receipts"""
     donor_name: Optional[str] = None
     village: Optional[str] = None
+    receipt_no: Optional[str] = None  # Receipt number search
     payment_mode: Optional[str] = None
     donation1_purpose: Optional[str] = None
     status: Optional[str] = None

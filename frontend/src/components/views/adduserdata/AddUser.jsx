@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import AsyncSelect from "react-select/async";
+import Select from "react-select";
 import { API_URLS } from "../../../utils/fetchurl";
 import { useRegularApiCall } from "../../../hooks/useApiCall";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -47,9 +47,91 @@ const AddUser = () => {
     pendingAction: null
   });
   
+  // State for areas and villages dropdown with search
+  const [allAreas, setAllAreas] = useState([]); // All areas loaded from API
+  const [allVillages, setAllVillages] = useState([]); // All villages loaded from API
+  const [areaSearchTerm, setAreaSearchTerm] = useState(''); // Search term for areas
+  const [villageSearchTerm, setVillageSearchTerm] = useState(''); // Search term for villages
+  
   // API call hooks
   const { loading, error, execute, reset } = useRegularApiCall();
   const { isAuthenticated, logout } = useAuth(); // Add auth context
+
+  // Load areas and villages once on component mount
+  useEffect(() => {
+    loadAllAreas();
+    loadAllVillages();
+  }, []);
+
+  const loadAllAreas = async () => {
+    try {
+      const res = await axios.get(API_URLS.getAllAreas(), {
+        params: { page_size: -1 } // Fetch all records at once
+      });
+      if (res.data && res.data.data) {
+        const areas = res.data.data.map((area) => ({
+          label: area.area,
+          value: area.area_id,
+        }));
+        setAllAreas(areas);
+        console.log(`✅ Loaded ${areas.length} areas for dropdown (all records)`);
+      }
+    } catch (err) {
+      console.error("Error loading areas:", err);
+      setAllAreas([]);
+    }
+  };
+
+  const loadAllVillages = async () => {
+    try {
+      const res = await axios.get(API_URLS.getAllVillages(), {
+        params: { page_size: -1 } // Fetch all records at once
+      });
+      if (res.data && res.data.data) {
+        const villages = res.data.data.map((village) => ({
+          label: village.village,
+          value: village.village_id,
+        }));
+        setAllVillages(villages);
+        console.log(`✅ Loaded ${villages.length} villages for dropdown (all records)`);
+      }
+    } catch (err) {
+      console.error("Error loading villages:", err);
+      setAllVillages([]);
+    }
+  };
+
+  // Filter areas based on search (show top 10)
+  const filteredAreaOptions = useMemo(() => {
+    if (!areaSearchTerm) {
+      // No search - show first 10 areas
+      return allAreas.slice(0, 10);
+    }
+    
+    // Search in local state
+    const filtered = allAreas.filter(area =>
+      area.label.toLowerCase().includes(areaSearchTerm.toLowerCase())
+    );
+    
+    // Return top 10 results
+    return filtered.slice(0, 10);
+  }, [allAreas, areaSearchTerm]);
+
+  // Filter villages based on search (show top 10)
+  const filteredVillageOptions = useMemo(() => {
+    if (!villageSearchTerm) {
+      // No search - show first 10 villages
+      return allVillages.slice(0, 10);
+    }
+    
+    // Search in local state
+    const filtered = allVillages.filter(village =>
+      village.label.toLowerCase().includes(villageSearchTerm.toLowerCase())
+    );
+    
+    // Return top 10 results
+    return filtered.slice(0, 10);
+  }, [allVillages, villageSearchTerm]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -161,35 +243,6 @@ const AddUser = () => {
     }
   };
 
-  const loadAreaOptions = async (inputValue) => {
-    try {
-      const res = await axios.get(API_URLS.getAllAreas(), {
-        params: { area: inputValue }
-      });
-      return res.data.data.map((area) => ({
-        label: area.area,
-        value: area.area_id,
-      }));
-    } catch (err) {
-      console.error("Area fetch failed", err);
-      return [];
-    }
-  };
-
-  const loadVillageOptions = async (inputValue) => {
-    try {
-      const res = await axios.get(API_URLS.getAllVillages(), {
-        params: { village: inputValue }
-      });
-      return res.data.data.map((village) => ({
-        label: village.village,
-        value: village.village_id,
-      }));
-    } catch (err) {
-      console.error("Village fetch failed", err);
-      return [];
-    }
-  };
 
   const handleRetry = () => {
     reset();
@@ -229,10 +282,8 @@ const AddUser = () => {
         <input name="mobile_no1" value={formData.mobile_no1} onChange={handleChange} placeholder="Mobile 1" />
         <input name="mobile_no2" value={formData.mobile_no2} onChange={handleChange} placeholder="Mobile 2" />
 
-        <AsyncSelect
-          cacheOptions
-          defaultOptions
-          loadOptions={loadAreaOptions}
+        <Select
+          options={filteredAreaOptions}
           placeholder="Select Area"
           onChange={(selected) =>
             setFormData((prev) => ({
@@ -241,19 +292,23 @@ const AddUser = () => {
               area: selected?.label || "",
             }))
           }
+          onInputChange={(value) => setAreaSearchTerm(value)}
           value={
-            formData.fk_area_id
+            formData.fk_area_id || formData.area
               ? { value: formData.fk_area_id, label: formData.area }
               : null
           }
           isClearable
-          styles={{ container: (base) => ({ ...base, width: 180 }) }}
+          isSearchable
+          menuPortalTarget={document.body}
+          styles={{ 
+            container: (base) => ({ ...base, width: 180 }),
+            menuPortal: (base) => ({ ...base, zIndex: 9999 })
+          }}
         />
 
-        <AsyncSelect
-          cacheOptions
-          defaultOptions
-          loadOptions={loadVillageOptions}
+        <Select
+          options={filteredVillageOptions}
           placeholder="Select Village"
           onChange={(selected) =>
             setFormData((prev) => ({
@@ -262,13 +317,19 @@ const AddUser = () => {
               village: selected?.label || "",
             }))
           }
+          onInputChange={(value) => setVillageSearchTerm(value)}
           value={
-            formData.fk_village_id
+            formData.fk_village_id || formData.village
               ? { value: formData.fk_village_id, label: formData.village }
               : null
           }
           isClearable
-          styles={{ container: (base) => ({ ...base, width: 180 }) }}
+          isSearchable
+          menuPortalTarget={document.body}
+          styles={{ 
+            container: (base) => ({ ...base, width: 180 }),
+            menuPortal: (base) => ({ ...base, zIndex: 9998 })
+          }}
         />
 
         <input name="address" value={formData.address} onChange={handleChange} placeholder="Address" />

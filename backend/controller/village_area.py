@@ -36,7 +36,8 @@ def create_village_controller(village_data: VillageBase, db_session: Session):
 def get_villages_controller(
     db_session: Session,
     village_filter: Optional[str] = None,
-    page_num: int = 1
+    page_num: int = 1,
+    page_size: int = 10
 ):
     """
     Controller to get villages with user count
@@ -44,7 +45,7 @@ def get_villages_controller(
     try:
         # Get villages through manager
         get_response = village_area_manager.get_villages_with_user_count(
-            db_session, village_filter, page_num
+            db_session, village_filter, page_num, page_size
         )
         
         data = get_response.get('data', [])
@@ -120,7 +121,8 @@ def create_area_controller(area_data: AreaBase, db_session: Session):
 def get_areas_controller(
     db_session: Session,
     area_filter: Optional[str] = None,
-    page_num: int = 1
+    page_num: int = 1,
+    page_size: int = 10
 ):
     """
     Controller to get areas with user count
@@ -128,7 +130,7 @@ def get_areas_controller(
     try:
         # Get areas through manager
         get_response = village_area_manager.get_areas_with_user_count(
-            db_session, area_filter, page_num
+            db_session, area_filter, page_num, page_size
         )
         
         data = get_response.get('data', [])

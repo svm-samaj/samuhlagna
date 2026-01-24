@@ -40,14 +40,16 @@ async def read_village(
     db: db_dependency,
     village: Optional[str] = None,
     page_num: Optional[int] = 1,
+    page_size: Optional[int] = 10,
     current_user: User = Depends(require_user_data_viewer)
 ):
     """
     API to get village records with user count and pagination.
+    Use page_size=-1 to fetch all records at once.
     Requires: user_data_viewer, user_data_editor, or admin role
     """
     try:
-        response = village_area_controller.get_villages_controller(db, village, page_num)
+        response = village_area_controller.get_villages_controller(db, village, page_num, page_size)
         return response
     except Exception as e:
         raise
@@ -93,14 +95,16 @@ async def read_area(
     db: db_dependency,
     area: Optional[str] = None,
     page_num: Optional[int] = 1,
+    page_size: Optional[int] = 10,
     current_user: User = Depends(require_user_data_viewer)
 ):
     """
     API to get area records with user count and pagination.
+    Use page_size=-1 to fetch all records at once.
     Requires: user_data_viewer, user_data_editor, or admin role
     """
     try:
-        response = village_area_controller.get_areas_controller(db, area, page_num)
+        response = village_area_controller.get_areas_controller(db, area, page_num, page_size)
         return response
     except Exception as e:
         raise

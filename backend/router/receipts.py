@@ -181,6 +181,7 @@ async def list_receipts(
     page_size: Optional[int] = Query(10, ge=1, le=10000, description="Items per page"),
     donor_name: Optional[str] = Query(None, description="Filter by donor name"),
     village: Optional[str] = Query(None, description="Filter by village"),
+    receipt_no: Optional[str] = Query(None, description="Filter by receipt number"),
     payment_mode: Optional[str] = Query(None, description="Filter by payment mode"),
     donation1_purpose: Optional[str] = Query(None, description="Filter by donation purpose"),
     status: Optional[str] = Query(None, description="Filter by status"),
@@ -226,11 +227,12 @@ async def list_receipts(
         
         # Create filters object
         filters = None
-        if any([donor_name, village, payment_mode, donation1_purpose, status, date_from, date_to, created_by]):
+        if any([donor_name, village, receipt_no, payment_mode, donation1_purpose, status, date_from, date_to, created_by]):
             from datetime import datetime
             filters = ReceiptFilter(
                 donor_name=donor_name,
                 village=village,
+                receipt_no=receipt_no,
                 payment_mode=payment_mode,
                 donation1_purpose=donation1_purpose,
                 status=status,
