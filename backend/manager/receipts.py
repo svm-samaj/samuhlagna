@@ -431,11 +431,10 @@ def get_receipt_creators(db_session: Session, user_id: int, user_roles: List[str
             print(f"DEBUG: No receipts found in database")
             return []
         
-        # Base query to get users who have created receipts
+        # Base query to get users who have created receipts (including inactive users)
         query = (
             db_session.query(User)
             .join(Receipt, User.id == Receipt.created_by)
-            .filter(User.is_active == True)
             .distinct()
             .order_by(User.username)
         )
@@ -481,7 +480,7 @@ def get_creators_usernames(db_session: Session, creator_ids: List[int]) -> Dict[
 
 def get_users_by_role_ids(db_session: Session, role_ids: List[int]) -> List[Dict[str, Any]]:
     """
-    Get users with specific role IDs for receipt reports dropdown
+    Get users with specific role IDs for receipt reports dropdown (including inactive users)
     
     Args:
         db_session: Database session
@@ -493,12 +492,11 @@ def get_users_by_role_ids(db_session: Session, role_ids: List[int]) -> List[Dict
     try:
         from models.auth import User, UserRole
         
-        # Join query to get users with specified role IDs
+        # Join query to get users with specified role IDs (including inactive users)
         users = (
             db_session.query(User.id, User.username)
             .join(UserRole, User.id == UserRole.user_id)
             .filter(UserRole.role_id.in_(role_ids))
-            .filter(User.is_active == True)
             .distinct()
             .order_by(User.username)
             .all()

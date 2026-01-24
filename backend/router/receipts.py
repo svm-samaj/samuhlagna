@@ -99,27 +99,14 @@ async def get_receipt_creators(
                 "message": "Creator filter not available for this user role"
             }
         
-        print(f"DEBUG: Access granted - returning creator list")
+        print(f"DEBUG: Access granted - fetching creator list from database")
         
-        # For testing: return hardcoded data for users with proper permissions
-        return {
-            "status": "success",
-            "data": [
-                {
-                    "id": 1,
-                    "username": "admin", 
-                    "display_name": "Administrator",
-                    "is_active": True
-                },
-                {
-                    "id": 6,
-                    "username": "receipt_creator1",
-                    "display_name": "Receipt Creator 1", 
-                    "is_active": True
-                }
-            ],
-            "message": "Available receipt creators"
-        }
+        # Fetch actual creators from database
+        response = receipts_controller.get_receipt_creators_controller(
+            db, current_user.id, user_roles
+        )
+        
+        return response
         
     except Exception as e:
         print(f"ERROR in /receipts/creators: {str(e)}")
@@ -498,9 +485,9 @@ async def debug_user_permissions(
         user_roles = get_user_roles(db, current_user.id)
         has_read_receipts = user_has_permission(user_roles, Perm.READ_RECEIPTS)
         
-        # Check receipts and creators
+        # Check receipts and creators (including inactive users)
         total_receipts = db.query(Receipt).count()
-        creators_query = db.query(User).join(Receipt, User.id == Receipt.created_by).filter(User.is_active == True).distinct()
+        creators_query = db.query(User).join(Receipt, User.id == Receipt.created_by).distinct()
         creators = creators_query.all()
         
         return {
