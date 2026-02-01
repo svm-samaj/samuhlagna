@@ -23,7 +23,7 @@ class ReceiptCreate(BaseModel):
     donation1_purpose: Optional[str] = Field(None, max_length=500)
     donation1_amount: Optional[float] = Field(0.00, ge=0)
     donation2_amount: Optional[float] = Field(0.00, ge=0)
-    total_amount: float = Field(..., gt=0)
+    total_amount: float = Field(..., ge=0)
     total_amount_words: Optional[str] = None
 
     class Config:
@@ -59,7 +59,7 @@ class ReceiptUpdate(BaseModel):
     donation1_purpose: Optional[str] = Field(None, max_length=500)
     donation1_amount: Optional[float] = Field(None, ge=0)
     donation2_amount: Optional[float] = Field(None, ge=0)
-    total_amount: Optional[float] = Field(None, gt=0)
+    total_amount: Optional[float] = Field(None, ge=0)
     total_amount_words: Optional[str] = None
     status: Optional[str] = Field(None, pattern="^(completed|cancelled)$")
 

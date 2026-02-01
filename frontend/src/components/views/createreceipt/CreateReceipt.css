@@ -935,6 +935,12 @@
     font-size: 12px !important;
     outline: none !important;
   }
+
+  /* Payment details input: wider in print so long text displays */
+  .form-row:has(.payment-dropdown) .input-line {
+    max-width: 450px !important;
+    min-width: 280px !important;
+  }
   
   /* Hide all placeholders in print */
   .form-row .input-line::placeholder,
@@ -980,6 +986,13 @@
     height: 10px !important;
     font-size: 13px !important;
     line-height: 1 !important;
+  }
+
+  /* Donation purpose row: enough height for reduced-height selects in print */
+  .donation tbody tr:first-child td {
+    height: 16px !important;
+    min-height: 16px !important;
+    vertical-align: middle !important;
   }
 
   .donation .total-row td {
@@ -1167,17 +1180,25 @@
     vertical-align: baseline !important;
   }
   
+  /* Donation purpose dropdowns: hide arrow and reduce height in print only */
   .donation .col-desc select {
     border: none !important;
     border-bottom: 1px solid #666 !important;
     background: transparent !important;
     font-family: inherit !important;
-    font-size: 13px !important;
-    padding: 1px 2px !important;
+    font-size: 11px !important;
+    padding: 0 2px !important;
+    height: 14px !important;
+    min-height: 14px !important;
+    line-height: 14px !important;
     text-align: center !important;
     outline: none !important;
     display: inline-block !important;
-    vertical-align: baseline !important;
+    vertical-align: middle !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: none !important;
   }
 }
 

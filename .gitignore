@@ -34,5 +34,5 @@ venv
 # test.py
 **.env**
 insert_users_part_1.sql
-
+receipts_migration_Data.sql
 Extra

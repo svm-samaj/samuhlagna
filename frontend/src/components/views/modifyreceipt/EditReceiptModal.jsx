@@ -98,9 +98,10 @@ const EditReceiptModal = ({ receipt, onSave, onClose, isLoading }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    // Validate required fields
-    if (!formData.donor_name || !formData.total_amount || formData.total_amount <= 0) {
-      alert('Please fill in required fields: Donor Name and Total Amount (must be greater than 0)');
+    // Validate required fields (allow total_amount 0)
+    const totalNum = parseFloat(formData.total_amount);
+    if (!formData.donor_name || isNaN(totalNum) || totalNum < 0) {
+      alert('Please fill in required fields: Donor Name and Total Amount (zero or greater)');
       return;
     }
 
@@ -224,7 +225,7 @@ const EditReceiptModal = ({ receipt, onSave, onClose, isLoading }) => {
             {/* Payment Info */}
             <div className="form-section">
               <h3>Payment Information</h3>
-              <div className="form-row">
+              <div className="form-row payment-mode-row">
                 <label>
                   Payment Mode *
                   <select
@@ -239,7 +240,7 @@ const EditReceiptModal = ({ receipt, onSave, onClose, isLoading }) => {
                     <option value="Online">Online</option>
                   </select>
                 </label>
-                <label>
+                <label className="payment-details-label">
                   Payment Details
                   <input
                     type="text"
@@ -248,6 +249,7 @@ const EditReceiptModal = ({ receipt, onSave, onClose, isLoading }) => {
                     onChange={handleInputChange}
                     placeholder="Enter payment details"
                     disabled={isLoading}
+                    className="payment-details-input"
                   />
                 </label>
               </div>
@@ -301,7 +303,7 @@ const EditReceiptModal = ({ receipt, onSave, onClose, isLoading }) => {
                   <input
                     type="number"
                     step="0.01"
-                    min="0.01"
+                    min="0"
                     name="total_amount"
                     value={formData.total_amount}
                     onChange={handleInputChange}

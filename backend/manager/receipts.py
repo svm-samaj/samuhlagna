@@ -23,6 +23,14 @@ from models.receipts import Receipt
 from api_request_response.receipts import ReceiptCreate, ReceiptUpdate, ReceiptFilter
 
 
+def _upper(value):
+    """Convert string to uppercase for DB storage; leave None and non-strings unchanged."""
+    if value is None or not isinstance(value, str):
+        return value
+    s = (value or "").strip()
+    return s.upper() if s else value
+
+
 def get_receipt_creator_code(db_session: Session, user_id: int) -> str:
     """
     [DEPRECATED] Get receipt creator code from user info
@@ -78,22 +86,22 @@ def create_receipt(db_session: Session, receipt_data: ReceiptCreate, user_id: in
         Created Receipt object
     """
     try:
-        # Step 1: Create receipt with temporary receipt_no
+        # Step 1: Create receipt with temporary receipt_no (store all user text in uppercase)
         new_receipt = Receipt(
             receipt_no=f"TEMP_{int(time.time())}_{user_id}",  # Unique temporary value
             receipt_date=receipt_data.receipt_date,
-            donor_name=receipt_data.donor_name,
-            village=receipt_data.village,
-            residence=receipt_data.residence,
+            donor_name=_upper(receipt_data.donor_name),
+            village=_upper(receipt_data.village) if receipt_data.village else None,
+            residence=_upper(receipt_data.residence) if receipt_data.residence else None,
             mobile=receipt_data.mobile,
-            relation_address=receipt_data.relation_address,
+            relation_address=_upper(receipt_data.relation_address) if receipt_data.relation_address else None,
             payment_mode=receipt_data.payment_mode,
-            payment_details=receipt_data.payment_details,
-            donation1_purpose=receipt_data.donation1_purpose,
+            payment_details=_upper(receipt_data.payment_details) if receipt_data.payment_details else None,
+            donation1_purpose=_upper(receipt_data.donation1_purpose) if receipt_data.donation1_purpose else None,
             donation1_amount=receipt_data.donation1_amount or 0.00,
             donation2_amount=receipt_data.donation2_amount or 0.00,
-            total_amount=receipt_data.total_amount,
-            total_amount_words=receipt_data.total_amount_words,
+            total_amount=(receipt_data.donation1_amount or 0.00) + (receipt_data.donation2_amount or 0.00),
+            total_amount_words=_upper(receipt_data.total_amount_words) if receipt_data.total_amount_words else None,
             created_by=user_id
         )
         
@@ -101,9 +109,8 @@ def create_receipt(db_session: Session, receipt_data: ReceiptCreate, user_id: in
         db_session.add(new_receipt)
         db_session.flush()  # This gets the ID without committing
         
-        # Step 3: Generate final receipt number in simple format A-XXXX
-        # Subtract 630 from ID for receipt number (e.g., ID 1407 -> 777)
-        receipt_sequence = new_receipt.id - 630
+        # Step 3: Generate final receipt number in simple format A-XXXX Starting from 1100
+        receipt_sequence = new_receipt.id + 1100
         # Ensure sequence is positive (fallback to ID if result would be negative)
         if receipt_sequence <= 0:
             receipt_sequence = new_receipt.id
@@ -278,8 +285,15 @@ def update_receipt(db_session: Session, receipt_id: int, updated_data: ReceiptUp
                 detail="You can only update your own receipts"
             )
         
-        # Update fields (only if provided)
+        # Update fields (only if provided); store user text in uppercase
         update_data = updated_data.dict(exclude_unset=True)
+        _text_fields = (
+            "donor_name", "village", "residence", "relation_address",
+            "payment_details", "donation1_purpose", "total_amount_words"
+        )
+        for field in _text_fields:
+            if field in update_data and update_data[field] is not None:
+                update_data[field] = _upper(update_data[field])
         for field, value in update_data.items():
             setattr(receipt, field, value)
         

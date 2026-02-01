@@ -264,27 +264,20 @@ const CreateReceipt = () => {
     }
   }, [receiptData.donation1PurposeNumber, receiptData.donation1PurposeType]);
 
-  // Auto-calculate total when donations change
+  // Auto-calculate total when donations change (include 0 so total shows when donation1 or donation2 is 0)
   useEffect(() => {
     const donation1Amount = parseFloat(getNumericValue(receiptData.donation1)) || 0;
     const donation2Amount = parseFloat(getNumericValue(receiptData.donation2)) || 0;
     const calculatedTotal = donation1Amount + donation2Amount;
-    
-    // Update total if there's a sum, or clear it if both fields are empty
-    if (calculatedTotal > 0) {
-      const totalString = formatIndianNumber(calculatedTotal.toString());
-      setReceiptData(prev => ({
-        ...prev,
-        total: totalString
-      }));
-      // Update total words display with English words
-      setTotalWordsDisplay(numberToEnglishWords(calculatedTotal.toString()));
-    } else if (receiptData.donation1 === '' && receiptData.donation2 === '') {
-      setReceiptData(prev => ({
-        ...prev,
-        total: ''
-      }));
+    const bothEmpty = receiptData.donation1 === '' && receiptData.donation2 === '';
+
+    if (bothEmpty) {
+      setReceiptData(prev => ({ ...prev, total: '' }));
       setTotalWordsDisplay('');
+    } else {
+      const totalString = formatIndianNumber(calculatedTotal.toString());
+      setReceiptData(prev => ({ ...prev, total: totalString }));
+      setTotalWordsDisplay(numberToEnglishWords(calculatedTotal.toString()));
     }
   }, [receiptData.donation1, receiptData.donation2]);
 
@@ -502,10 +495,10 @@ const CreateReceipt = () => {
   const handleSaveReceipt = async () => {
     try {
       // Validate required fields
-      if (!receiptData.name || !receiptData.total) {
+      if (!receiptData.name) {
         setOverlayState({
           isVisible: true,
-          message: "Please fill in required fields: Name and Total Amount",
+          message: "Please fill in required fields: Name",
           isError: true,
           errorType: "validation",
           pendingAction: null
@@ -513,12 +506,12 @@ const CreateReceipt = () => {
         return;
       }
 
-      // Validate total amount
+      // Validate total amount (allow 0)
       const totalAmount = parseFloat(getNumericValue(receiptData.total));
-      if (!totalAmount || totalAmount <= 0) {
+      if (isNaN(totalAmount) || totalAmount < 0) {
         setOverlayState({
           isVisible: true,
-          message: "Please enter a valid total amount",
+          message: "Please enter a valid total amount (zero or greater)",
           isError: true,
           errorType: "validation",
           pendingAction: null
@@ -751,10 +744,12 @@ const CreateReceipt = () => {
         .form-row label { font-size: 14px !important; }
         .form-row:has(.payment-dropdown) label { width: 170px !important; }
         .form-row .input-line { font-size: 12px !important; height: 16px !important; padding: 1px 3px !important; }
-        .form-row:has(.payment-dropdown) .input-line { max-width: 200px !important; }
+        .form-row:has(.payment-dropdown) .input-line { max-width: 450px !important; min-width: 280px !important; }
         .form-row .input-line::placeholder, .donation input::placeholder { color: transparent !important; opacity: 0 !important; }
         .receipt-no-readonly { font-weight: 700 !important; font-size: 13px !important; }
         .donation tbody td { font-size: 13px !important; height: 10px !important; padding: 0px 3px !important; line-height: 1 !important; }
+        .donation tbody tr:first-child td { height: 16px !important; min-height: 16px !important; vertical-align: middle !important; }
+        .donation .col-desc select { -webkit-appearance: none !important; -moz-appearance: none !important; appearance: none !important; background-image: none !important; height: 14px !important; min-height: 14px !important; line-height: 14px !important; font-size: 11px !important; padding: 0 2px !important; border: none !important; border-bottom: 1px solid #666 !important; background: transparent !important; }
         .donation .total-row td { font-size: 13px !important; height: 14px !important; padding: 1px 4px !important; }
         .donation .total-row .amount-input-wrapper input { font-weight: 700 !important; font-size: 13px !important; }
         .donation .total-row td:first-child { text-align: left !important; padding-left: 8px !important; font-weight: normal !important; }
@@ -1181,7 +1176,7 @@ const CreateReceipt = () => {
                 onChange={handleInputChange}
                 placeholder=""
                 readOnly={isPreviewMode}
-                style={{marginLeft: '5px', maxWidth: '250px'}}
+                style={{marginLeft: '5px', minWidth: '280px', maxWidth: '500px', flex: 1}}
               />
             </div>
           </div>
@@ -1562,7 +1557,7 @@ const CreateReceipt = () => {
                 onChange={handleInputChange}
                 placeholder=""
                 readOnly={isPreviewMode}
-                style={{marginLeft: '5px', maxWidth: '250px'}}
+                style={{marginLeft: '5px', minWidth: '280px', maxWidth: '500px', flex: 1}}
               />
             </div>
           </div>

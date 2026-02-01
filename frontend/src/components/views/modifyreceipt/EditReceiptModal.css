@@ -110,6 +110,17 @@
   margin-bottom: 0;
 }
 
+/* Payment row: give payment details input more width for long text */
+.form-row.payment-mode-row {
+  grid-template-columns: 180px 1fr;
+}
+
+.form-row.payment-mode-row .payment-details-input,
+.payment-details-label input.payment-details-input {
+  min-width: 280px;
+  width: 100%;
+}
+
 /* Form Labels and Inputs */
 label {
   display: flex;
