@@ -65,15 +65,20 @@ export default {
       }
 
       // Use pathname + search when requesting assets from the assets binding
-      const assetPath = normalizedUrl.pathname + normalizedUrl.search;
+      let assetPath = (normalizedUrl.pathname || '/') + normalizedUrl.search;
+      // Map root to index.html for assets binding
+      if (assetPath === '/' || assetPath === '') {
+        assetPath = '/index.html';
+      }
+
       let assetResponse;
       try {
-        assetResponse = await env.ASSETS.fetch(assetPath);
+        assetResponse = await env.ASSETS.fetch(new Request(assetPath, request));
       } catch (e) {
         console.error('env.ASSETS.fetch error for', assetPath, e);
-        // Fallback: serve index.html for SPA routes if asset fetch fails
+        // Fallback: try index.html
         try {
-          return await env.ASSETS.fetch('/index.html');
+          assetResponse = await env.ASSETS.fetch(new Request('/index.html', request));
         } catch (e2) {
           console.error('env.ASSETS.fetch index.html error', e2);
           throw e2;
