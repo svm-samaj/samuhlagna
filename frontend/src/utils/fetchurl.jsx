@@ -7,9 +7,9 @@
  * Test all pages after modifying base URL or API endpoints!
  */
 
-// Smart environment detection with fallbacks for GitHub Pages deployment
+// Smart environment detection with Cloudflare Workers proxy support
 
-// Validate and get base URL - SMART MODE with FORCED GitHub Pages detection
+// Validate and get base URL - Routes through Cloudflare Workers proxy for /api requests
 const getBaseUrl = () => {
   // DEBUG: Log all environment variables
   console.log('🔍 DEBUG - All Vite env vars:', import.meta.env);
@@ -27,6 +27,7 @@ const getBaseUrl = () => {
   // FORCE PRODUCTION for GitHub Pages - hostname-based detection takes priority
   const isGitHubPages = hostname.includes('github.io');
   const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0';
+  const isCloudflareWorkers = hostname.includes('workers.dev');
   
   // DEV OVERRIDE: Check for force production flag (multiple methods)
   const forceProductionValue = localStorage.getItem('FORCE_PRODUCTION');
@@ -39,6 +40,7 @@ const getBaseUrl = () => {
   console.log('🔍 DEBUG - window.FORCE_PROD_MODE:', window.FORCE_PROD_MODE);
   console.log('🔍 DEBUG - forceProduction final:', forceProduction);
   console.log('🔍 DEBUG - isLocalhost:', isLocalhost);
+  console.log('🔍 DEBUG - isCloudflareWorkers:', isCloudflareWorkers);
   
   let detectedEnv;
   
@@ -52,17 +54,22 @@ const getBaseUrl = () => {
     detectedEnv = nodeEnv;
     console.log(`📝 ENV VARIABLE: ${detectedEnv} (from VITE_NODE_ENV) - Controls backend URL`);
   }
-  // PRIORITY 2: Hostname-based fallback for GitHub Pages  
+  // PRIORITY 2: Cloudflare Workers - use proxy API
+  else if (isCloudflareWorkers) {
+    detectedEnv = 'cloudflare';
+    console.log(`☁️ CLOUDFLARE WORKERS: Using /api proxy (detected ${hostname})`);
+  }
+  // PRIORITY 3: Hostname-based fallback for GitHub Pages  
   else if (isGitHubPages) {
     detectedEnv = 'production';
     console.log(`🚀 GITHUB PAGES: production (detected ${hostname}) - Using production backend`);
   }
-  // PRIORITY 3: Localhost fallback (when no env var set)
+  // PRIORITY 4: Localhost fallback (when no env var set)
   else if (isLocalhost) {
     detectedEnv = 'development';
     console.log(`🏠 LOCALHOST FALLBACK: development (${hostname}) - No env var found, defaulting to dev`);
   }
-  // PRIORITY 4: Default to production for any other domain
+  // PRIORITY 5: Default to production for any other domain
   else {
     detectedEnv = 'production';
     console.log(`🌐 DEFAULT: production (unknown domain: ${hostname})`);
@@ -77,6 +84,13 @@ const getBaseUrl = () => {
     console.log('✅ Final Environment: development');
     console.log('✅ Final API URL:', devUrl);
     return devUrl;
+  }
+  
+  // Cloudflare Workers - use relative /api path for proxy
+  if (detectedEnv === 'cloudflare') {
+    console.log('✅ Final Environment: cloudflare');
+    console.log('✅ Final API URL: /api (Cloudflare Workers proxy)');
+    return '/api';
   }
   
   // Production environment (GitHub Pages, Render, etc.)
