@@ -64,13 +64,27 @@ export default {
         normalizedUrl.pathname = normalizedUrl.pathname.replace(/^\/samuhlagna/, '') || '/';
       }
 
-      const assetRequest = new Request(normalizedUrl.toString(), request);
-      const assetResponse = await env.ASSETS.fetch(assetRequest);
+      // Use pathname + search when requesting assets from the assets binding
+      const assetPath = normalizedUrl.pathname + normalizedUrl.search;
+      const assetRequest = new Request(assetPath, request);
+      let assetResponse;
+      try {
+        assetResponse = await env.ASSETS.fetch(assetRequest);
+      } catch (e) {
+        console.error('env.ASSETS.fetch error for', assetPath, e);
+        throw e;
+      }
 
       // If asset not found, return index.html for SPA routing
       if (assetResponse.status === 404) {
-        const indexReq = new Request(new URL('/index.html', normalizedUrl).toString(), request);
-        return await env.ASSETS.fetch(indexReq);
+        // Serve index.html for SPA routes
+        try {
+          const indexReq = new Request('/index.html', request);
+          return await env.ASSETS.fetch(indexReq);
+        } catch (e) {
+          console.error('env.ASSETS.fetch index.html error', e);
+          throw e;
+        }
       }
 
       return assetResponse;
