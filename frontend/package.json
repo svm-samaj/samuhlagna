@@ -9,9 +9,11 @@
     "build": "vite build",
     "build:dev": "cross-env VITE_NODE_ENV=development vite build",
     "build:prod": "cross-env VITE_NODE_ENV=production vite build",
+    "build:github": "cross-env BASE_PATH=/samuhlagna/ npm run build:prod",
+    "build:workers": "cross-env BASE_PATH=/ npm run build:prod",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build:prod",
+    "predeploy": "npm run build:github",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {

@@ -1,8 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  base: "/samuhlagna/",
+export default defineConfig(({ mode }) => {
+  // Support BASE_PATH environment variable for flexible deployment
+  const basePath = process.env.BASE_PATH || (mode === "workers" ? "/" : "/samuhlagna/");
+
+  return {
+    plugins: [react()],
+    base: basePath,
+  }
+
 })
