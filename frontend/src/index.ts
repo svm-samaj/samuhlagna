@@ -66,13 +66,18 @@ export default {
 
       // Use pathname + search when requesting assets from the assets binding
       const assetPath = normalizedUrl.pathname + normalizedUrl.search;
-      const assetRequest = new Request(assetPath, request);
       let assetResponse;
       try {
-        assetResponse = await env.ASSETS.fetch(assetRequest);
+        assetResponse = await env.ASSETS.fetch(assetPath);
       } catch (e) {
         console.error('env.ASSETS.fetch error for', assetPath, e);
-        throw e;
+        // Fallback: serve index.html for SPA routes if asset fetch fails
+        try {
+          return await env.ASSETS.fetch('/index.html');
+        } catch (e2) {
+          console.error('env.ASSETS.fetch index.html error', e2);
+          throw e2;
+        }
       }
 
       // If asset not found, return index.html for SPA routing
