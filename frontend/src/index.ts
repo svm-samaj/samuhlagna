@@ -57,6 +57,26 @@ export default {
     }
 
     // Serve static assets (frontend)
-    return env.ASSETS.fetch(request);
+    try {
+      // Normalize GitHub Pages base path: if path starts with /samuhlagna, strip it
+      let normalizedUrl = new URL(request.url);
+      if (normalizedUrl.pathname.startsWith('/samuhlagna')) {
+        normalizedUrl.pathname = normalizedUrl.pathname.replace(/^\/samuhlagna/, '') || '/';
+      }
+
+      const assetRequest = new Request(normalizedUrl.toString(), request);
+      const assetResponse = await env.ASSETS.fetch(assetRequest);
+
+      // If asset not found, return index.html for SPA routing
+      if (assetResponse.status === 404) {
+        const indexReq = new Request(new URL('/index.html', normalizedUrl).toString(), request);
+        return await env.ASSETS.fetch(indexReq);
+      }
+
+      return assetResponse;
+    } catch (err) {
+      console.error('Asset fetch error:', err);
+      return new Response('Internal Server Error', { status: 500 });
+    }
   },
 };
