@@ -49,15 +49,15 @@ const getBaseUrl = () => {
     detectedEnv = 'production';
     console.log(`🔧 DEV OVERRIDE: production (forced via localStorage.FORCE_PRODUCTION)`);
   }
-  // PRIORITY 1: Environment variable takes precedence (main logic)
-  else if (nodeEnv) {
-    detectedEnv = nodeEnv;
-    console.log(`📝 ENV VARIABLE: ${detectedEnv} (from VITE_NODE_ENV) - Controls backend URL`);
-  }
-  // PRIORITY 2: Cloudflare Workers - use proxy API
+  // PRIORITY 1: Cloudflare Workers - use proxy API (must come before env var check!)
   else if (isCloudflareWorkers) {
     detectedEnv = 'cloudflare';
     console.log(`☁️ CLOUDFLARE WORKERS: Using /api proxy (detected ${hostname})`);
+  }
+  // PRIORITY 2: Environment variable takes precedence (main logic)
+  else if (nodeEnv) {
+    detectedEnv = nodeEnv;
+    console.log(`📝 ENV VARIABLE: ${detectedEnv} (from VITE_NODE_ENV) - Controls backend URL`);
   }
   // PRIORITY 3: Hostname-based fallback for GitHub Pages  
   else if (isGitHubPages) {
