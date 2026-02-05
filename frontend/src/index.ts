@@ -12,18 +12,48 @@ export default {
 
     // Proxy all /api/* requests to Railway backend
     if (url.pathname.startsWith('/api')) {
-      const railwayUrl = RAILWAY_API_URL + url.pathname + url.search;
+      // Strip /api prefix and forward to Railway
+      const pathWithoutApi = url.pathname.substring(4); // Remove "/api"
+      const railwayUrl = RAILWAY_API_URL + pathWithoutApi + url.search;
+
+      console.log(`Proxying ${request.method} ${url.pathname} -> ${railwayUrl}`);
 
       try {
-        return await fetch(new Request(railwayUrl, {
+        const railwayRequest = new Request(railwayUrl, {
           method: request.method,
           headers: new Headers(request.headers),
           body: request.body,
-        }));
+        });
+
+        const response = await fetch(railwayRequest);
+        
+        // Add CORS headers to response
+        const newResponse = new Response(response.body, response);
+        newResponse.headers.set('Access-Control-Allow-Origin', '*');
+        newResponse.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        newResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        
+        return newResponse;
       } catch (error) {
         console.error('Proxy error:', error);
-        return new Response('Proxy error', { status: 502 });
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return new Response(JSON.stringify({ error: 'Proxy error', details: errorMessage }), {
+          status: 502,
+          headers: { 'Content-Type': 'application/json' }
+        });
       }
+    }
+
+    // Handle OPTIONS requests for CORS
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        }
+      });
     }
 
     // Serve static assets (frontend)
