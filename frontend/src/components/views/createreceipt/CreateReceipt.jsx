@@ -1209,8 +1209,10 @@ const CreateReceipt = () => {
                     <option value="ફુલહાર ખર્ચ દાન">ફુલહાર ખર્ચ દાન</option>
                     <option value="કંકોત્રી દાન">કંકોત્રી દાન</option>
                     <option value="કન્યાદાન">કન્યાદાન</option>
+                    <option value="લગ્ન નોંધણી ફી">લગ્ન નોંધણી ફી</option>
                     <option value="મંડપ ખર્ચ દાન">મંડપ ખર્ચ દાન</option>
                     <option value="મિનરલ પાણી ખર્ચ દાન">મિનરલ પાણી ખર્ચ દાન</option>
+                    <option value="પાનેતર ખર્ચ દાન">પાનેતર ખર્ચ દાન</option>
                     <option value="પૂજાપો ખર્ચ દાન">પૂજાપો ખર્ચ દાન</option>
                     <option value="સંપૂર્ણ ખર્ચ દાન">સંપૂર્ણ ખર્ચ દાન</option>
                     <option value="શેરવાની ખર્ચ દાન">શેરવાની ખર્ચ દાન</option>
@@ -1590,8 +1592,10 @@ const CreateReceipt = () => {
                     <option value="ફુલહાર ખર્ચ દાન">ફુલહાર ખર્ચ દાન</option>
                     <option value="કંકોત્રી દાન">કંકોત્રી દાન</option>
                     <option value="કન્યાદાન">કન્યાદાન</option>
+                    <option value="લગ્ન નોંધણી ફી">લગ્ન નોંધણી ફી</option>
                     <option value="મંડપ ખર્ચ દાન">મંડપ ખર્ચ દાન</option>
                     <option value="મિનરલ પાણી ખર્ચ દાન">મિનરલ પાણી ખર્ચ દાન</option>
+                    <option value="પાનેતર ખર્ચ દાન">પાનેતર ખર્ચ દાન</option>
                     <option value="પૂજાપો ખર્ચ દાન">પૂજાપો ખર્ચ દાન</option>
                     <option value="સંપૂર્ણ ખર્ચ દાન">સંપૂર્ણ ખર્ચ દાન</option>
                     <option value="શેરવાની ખર્ચ દાન">શેરવાની ખર્ચ દાન</option>
