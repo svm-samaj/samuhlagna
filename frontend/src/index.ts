@@ -4,7 +4,8 @@
  * This bypasses Jio ISP blocking of railway.app domains
  */
 
-const RAILWAY_API_URL = 'https://samuhlagna-production.up.railway.app';
+// const RAILWAY_API_URL = 'https://samuhlagna-production.up.railway.app';
+const RAILWAY_API_URL = 'https://samuhlagna.onrender.com';
 
 export default {
   async fetch(request: Request, env: any): Promise<Response> {
